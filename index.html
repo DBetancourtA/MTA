@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matemáticas Aplicadas — ITB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;--border:#21262D;
+  --violet:#8B5CF6;--violet-dim:#1e1340;--violet-mid:rgba(139,92,246,.12);
+  --emerald:#10B981;--emerald-dim:#052e16;
+  --rose:#F43F5E;--rose-dim:#1f0814;
+  --amber:#F59E0B;--amber-dim:#2d2208;
+  --blue:#3B82F6;--blue-dim:#0c1d3f;
+  --muted:#8B949E;--text:#E6EDF3;--radius:12px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
+  font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+body::before{content:'';position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(139,92,246,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(139,92,246,.025) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(13,17,23,.9);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2.5rem;height:56px;gap:12px}
+.nav-logo{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;
+  display:flex;align-items:center;gap:10px}
+.nav-logo .bracket{color:var(--violet)}
+.nav-logo .inst{color:var(--muted);font-weight:400;font-size:12px}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-period{font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--muted);background:var(--surface);border:1px solid var(--border);
+  padding:4px 12px;border-radius:20px}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--violet);
+  box-shadow:0 0 8px var(--violet);animation:pv 2s ease-in-out infinite}
+@keyframes pv{0%,100%{opacity:1;box-shadow:0 0 8px var(--violet)}50%{opacity:.4;box-shadow:0 0 2px var(--violet)}}
+
+/* ── HERO ── */
+.hero{position:relative;z-index:1;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 2rem 60px;text-align:center}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--muted);letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:28px;display:flex;align-items:center;justify-content:center;gap:12px}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:1;max-width:60px;height:1px;background:var(--border)}
+
+.hero-icon{margin-bottom:28px}
+
+.hero h1{font-family:'JetBrains Mono',monospace;
+  font-size:clamp(2rem,6vw,4rem);font-weight:700;line-height:1.08;margin-bottom:10px}
+.hero h1 .ac{color:var(--violet)}
+.hero h1 .dm{color:var(--muted);font-weight:300}
+.hero-sub{font-family:'JetBrains Mono',monospace;
+  font-size:clamp(.85rem,2vw,1.2rem);color:var(--muted);margin-bottom:18px}
+.hero p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto 40px}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:48px}
+.stat{text-align:center;font-family:'JetBrains Mono',monospace}
+.stat-n{font-size:30px;font-weight:700;line-height:1;margin-bottom:4px}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--violet);
+  color:white;font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:14px;padding:12px 28px;border-radius:8px;text-decoration:none;
+  transition:opacity .2s,transform .15s}
+.hero-cta:hover{opacity:.88;transform:translateY(-2px)}
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  animation:float 2.5s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── ABOUT ── */
+.about-strip{position:relative;z-index:1;background:var(--surface);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:40px 2.5rem}
+.about-inner{max-width:1000px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px}
+.ai-label{font-family:'JetBrains Mono',monospace;font-size:11px;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--violet);margin-bottom:8px}
+.ai-text{font-size:14px;color:var(--muted);line-height:1.65}
+.ai-text strong{color:var(--text)}
+
+/* ── SECTION ── */
+.section{position:relative;z-index:1;max-width:1040px;margin:0 auto;
+  padding:56px 1.5rem 100px}
+.section-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;
+  text-transform:uppercase;letter-spacing:.12em;color:var(--muted);
+  display:flex;align-items:center;gap:12px;margin-bottom:36px}
+.section-eyebrow::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── WEEK GRID ── */
+.week-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px}
+
+.wcard{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+  display:flex;flex-direction:column;transition:border-color .25s,transform .2s}
+.wcard:not(.soon):hover{transform:translateY(-3px)}
+.wcard.current{border-color:var(--violet);box-shadow:0 0 0 1px rgba(139,92,246,.15)}
+.wcard.current:hover{border-color:var(--violet)}
+.wcard.available{border-color:rgba(139,92,246,.2)}
+.wcard.available:hover{border-color:var(--violet)}
+.wcard.soon{opacity:.5;cursor:default}
+
+.wc-accent{height:3px}
+.acc-v{background:linear-gradient(90deg,var(--violet),var(--emerald))}
+.acc-va{background:linear-gradient(90deg,var(--violet),transparent)}
+.acc-s{background:var(--border)}
+
+/* accent colors per week */
+.wcard.wk2 .wc-accent{background:linear-gradient(90deg,var(--emerald),var(--blue))}
+.wcard.wk3 .wc-accent{background:linear-gradient(90deg,var(--rose),var(--violet))}
+.wcard.wk4 .wc-accent{background:linear-gradient(90deg,var(--amber),var(--rose))}
+.wcard.wk5 .wc-accent{background:linear-gradient(90deg,var(--blue),var(--emerald))}
+.wcard.wk6 .wc-accent{background:linear-gradient(90deg,var(--emerald),var(--amber))}
+
+.wc-top{padding:22px 22px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.wc-num{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;
+  line-height:1;letter-spacing:-.03em;user-select:none}
+.wcard.current  .wc-num{color:var(--violet);opacity:.2}
+.wcard.available .wc-num{color:var(--violet);opacity:.15}
+.wcard.soon     .wc-num{color:var(--muted);opacity:.08}
+
+.wc-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;padding:4px 10px;border-radius:4px}
+.badge-curr{background:var(--violet-dim);color:var(--violet);border:1px solid rgba(139,92,246,.35)}
+.badge-avail{background:var(--violet-dim);color:var(--violet);border:1px solid rgba(139,92,246,.25)}
+.badge-soon{background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+
+.wc-body{padding:14px 22px 18px;flex:1;display:flex;flex-direction:column;gap:8px}
+.wc-label{font-family:'JetBrains Mono',monospace;font-size:11px;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.wc-title{font-size:17px;font-weight:700;line-height:1.2}
+.wc-desc{font-size:13px;color:var(--muted);line-height:1.6;flex:1}
+.wc-topics{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.topic{font-family:'JetBrains Mono',monospace;font-size:11px;
+  background:var(--surface2);border:1px solid var(--border);
+  color:var(--muted);padding:3px 8px;border-radius:4px}
+.topic.vt{color:var(--violet);border-color:rgba(139,92,246,.2);background:var(--violet-dim)}
+
+.wc-files{padding:0 22px 18px;display:flex;flex-direction:column;gap:6px}
+.file-link{display:flex;align-items:center;gap:9px;padding:9px 12px;
+  border-radius:7px;background:var(--surface2);border:1px solid var(--border);
+  text-decoration:none;color:var(--text);font-size:13px;
+  font-family:'JetBrains Mono',monospace;transition:all .2s}
+.file-link:hover{border-color:var(--violet);color:var(--violet)}
+.fl-name{flex:1;font-size:12px}
+.fl-type{font-size:10px;color:var(--muted);background:var(--bg);
+  border:1px solid var(--border);padding:1px 6px;border-radius:3px}
+.wc-soon{padding:12px 22px 18px;font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:var(--muted);opacity:.7;display:flex;align-items:center;gap:7px}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);
+  padding:28px 2.5rem;display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+.footer-brand span{color:var(--violet)}
+.footer-links{display:flex;gap:16px}
+.footer-links a{font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+
+@media(max-width:700px){
+  nav{padding:0 1rem}.nav-period{display:none}
+  .about-inner{grid-template-columns:1fr}
+  footer{flex-direction:column;align-items:center;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <span class="bracket">∑</span>
+    <span>MAT</span>
+    <span class="inst">Matemáticas Aplicadas · ITB</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-period">Período 2025 · 2026</div>
+    <div class="nav-dot"></div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Instituto Tecnológico de Negocios · Materia</div>
+
+  <div class="hero-icon">
+    <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="8" width="56" height="56" rx="12" fill="#1e1340" stroke="#8B5CF6" stroke-width="2"/>
+      <text x="36" y="30" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="#8B5CF6">f(x)</text>
+      <line x1="16" y1="52" x2="56" y2="52" stroke="#30363D" stroke-width="1.5"/>
+      <line x1="16" y1="52" x2="16" y2="22" stroke="#30363D" stroke-width="1.5"/>
+      <!-- exponential curve -->
+      <path d="M18,50 C24,50 28,48 34,42 C40,36 46,28 54,24" stroke="#8B5CF6" stroke-width="2" fill="none"/>
+      <circle cx="34" cy="42" r="2.5" fill="#10B981"/>
+      <circle cx="54" cy="24" r="2.5" fill="#10B981"/>
+    </svg>
+  </div>
+
+  <h1>
+    <span class="dm">Matemáticas</span><br>
+    <span class="ac">Aplicadas</span>
+  </h1>
+  <div class="hero-sub">Del porcentaje a las funciones logarítmicas — matemática para negocios</div>
+  <p>Aplica matemáticas a situaciones reales del mundo empresarial: costos, precios, márgenes, funciones y modelado matemático.</p>
+
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-n" style="color:var(--violet)">6</div><div class="stat-l">Semanas</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--emerald)">1</div><div class="stat-l">Disponible</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--amber)">5</div><div class="stat-l">Próximamente</div></div>
+  </div>
+
+  <a href="#semanas" class="hero-cta">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    Ver el contenido
+  </a>
+
+  <div class="scroll-hint">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    scroll
+  </div>
+</section>
+
+<div class="about-strip">
+  <div class="about-inner">
+    <div>
+      <div class="ai-label">// Objetivo</div>
+      <div class="ai-text">Aplicar <strong>operaciones matemáticas</strong> a contextos empresariales reales: cálculo de precios, márgenes, funciones de costo e ingreso y modelado matemático.</div>
+    </div>
+    <div>
+      <div class="ai-label">// Metodología</div>
+      <div class="ai-text">Cada semana incluye <strong>casos prácticos resueltos</strong> paso a paso, gráficas interactivas y un taller por grupos con clave de acceso para practicar en clase.</div>
+    </div>
+    <div>
+      <div class="ai-label">// Herramientas</div>
+      <div class="ai-text">Las gráficas se generan <strong>directamente en el navegador</strong> — sin instalar calculadoras ni software extra. Solo abre la página y trabaja.</div>
+    </div>
+  </div>
+</div>
+
+<section class="section" id="semanas">
+  <div class="section-eyebrow">// Contenido del curso — 6 semanas</div>
+  <div class="week-grid">
+
+    <!-- SEMANA 1 -->
+    <div class="wcard current">
+      <div class="wc-accent acc-v"></div>
+      <div class="wc-top">
+        <div class="wc-num">S1</div>
+        <div class="wc-badge badge-curr">● Semana actual</div>
+      </div>
+      <div class="wc-body">
+        <div class="wc-label">Semana 1</div>
+        <div class="wc-title">Operaciones Aritméticas y Algebraicas</div>
+        <div class="wc-desc">Porcentajes, proporciones, precios y márgenes. Funciones de costo con casos de empresa ecuatoriana. Clase práctica resuelta.</div>
+        <div class="wc-topics">
+          <span class="topic vt">Porcentaje</span>
+          <span class="topic vt">Proporciones</span>
+          <span class="topic vt">C(x) = Cf + Cv</span>
+          <span class="topic vt">IVA · Descuentos</span>
+        </div>
+      </div>
+      <div class="wc-files">
+        <a class="file-link" href="mat-semana1.html">
+          <span>📖</span><span class="fl-name">mat-semana1.html</span>
+          <span class="fl-type">clase práctica</span>
+        </a>
+        <a class="file-link" href="mat-taller-semana1.html">
+          <span>🔐</span><span class="fl-name">mat-taller-semana1.html</span>
+          <span class="fl-type">taller grupos</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- SEMANA 2 -->
+    <div class="wcard wk2 soon">
+      <div class="wc-accent acc-s"></div>
+      <div class="wc-top">
+        <div class="wc-num">S2</div>
+        <div class="wc-badge badge-soon">Próximamente</div>
+      </div>
+      <div class="wc-body">
+        <div class="wc-label">Semana 2</div>
+        <div class="wc-title">Ecuaciones Lineales y Funciones</div>
+        <div class="wc-desc">Ecuaciones lineales, funciones exponenciales y logarítmicas aplicadas a negocios. Gráficas e interpretación.</div>
+        <div class="wc-topics">
+          <span class="topic">Ec. lineales</span>
+          <span class="topic">f(x) = eˣ</span>
+          <span class="topic">ln(x) · log(x)</span>
+        </div>
+      </div>
+      <div class="wc-soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Próximamente</div>
+    </div>
+
+    <!-- SEMANA 3 -->
+    <div class="wcard wk3 soon">
+      <div class="wc-accent acc-s"></div>
+      <div class="wc-top"><div class="wc-num">S3</div><div class="wc-badge badge-soon">Próximamente</div></div>
+      <div class="wc-body">
+        <div class="wc-label">Semana 3</div>
+        <div class="wc-title">Matrices y Sistemas de Ecuaciones</div>
+        <div class="wc-desc">Operaciones con matrices, sistemas de ecuaciones lineales y aplicaciones en análisis de mercado.</div>
+        <div class="wc-topics"><span class="topic">Matrices</span><span class="topic">Sistemas 2×2</span><span class="topic">Gauss</span></div>
+      </div>
+      <div class="wc-soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Próximamente</div>
+    </div>
+
+    <!-- SEMANA 4 -->
+    <div class="wcard wk4 soon">
+      <div class="wc-accent acc-s"></div>
+      <div class="wc-top"><div class="wc-num">S4</div><div class="wc-badge badge-soon">Próximamente</div></div>
+      <div class="wc-body">
+        <div class="wc-label">Semana 4</div>
+        <div class="wc-title">Estadística Descriptiva</div>
+        <div class="wc-desc">Media, mediana, moda, varianza y desviación estándar aplicadas a datos empresariales.</div>
+        <div class="wc-topics"><span class="topic">Media · Mediana</span><span class="topic">Varianza</span><span class="topic">Histogramas</span></div>
+      </div>
+      <div class="wc-soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Próximamente</div>
+    </div>
+
+    <!-- SEMANA 5 -->
+    <div class="wcard wk5 soon">
+      <div class="wc-accent acc-s"></div>
+      <div class="wc-top"><div class="wc-num">S5</div><div class="wc-badge badge-soon">Próximamente</div></div>
+      <div class="wc-body">
+        <div class="wc-label">Semana 5</div>
+        <div class="wc-title">Probabilidad y Toma de Decisiones</div>
+        <div class="wc-desc">Probabilidad básica, distribuciones y su aplicación en decisiones empresariales bajo incertidumbre.</div>
+        <div class="wc-topics"><span class="topic">Probabilidad</span><span class="topic">Binomial</span><span class="topic">Decisiones</span></div>
+      </div>
+      <div class="wc-soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Próximamente</div>
+    </div>
+
+    <!-- SEMANA 6 -->
+    <div class="wcard wk6 soon">
+      <div class="wc-accent acc-s"></div>
+      <div class="wc-top"><div class="wc-num">S6</div><div class="wc-badge badge-soon">Próximamente</div></div>
+      <div class="wc-body">
+        <div class="wc-label">Semana 6</div>
+        <div class="wc-title">Matemática Financiera</div>
+        <div class="wc-desc">Interés simple y compuesto, valor presente y futuro, anualidades y amortización de préstamos.</div>
+        <div class="wc-topics"><span class="topic">Interés compuesto</span><span class="topic">VPN</span><span class="topic">Anualidades</span></div>
+      </div>
+      <div class="wc-soon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Próximamente</div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand"><span>∑ MAT</span> &nbsp;·&nbsp; Instituto Tecnológico de Negocios &nbsp;·&nbsp; Matemáticas Aplicadas</div>
+  <div class="footer-links">
+    <a href="mat-semana1.html">Semana 1</a>
+    <a href="mat-taller-semana1.html">Taller S1</a>
+  </div>
+</footer>
+
+</body>
+</html>

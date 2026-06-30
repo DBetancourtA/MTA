@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller Semana 1 — Matemáticas Aplicadas · ITB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  CONFIGURACIÓN DEL DOCENTE — edita solo esta sección        ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+const ACCESS_PASSWORDS = {
+  1: "porcentaje1",
+  2: "proporcion2",
+  3: "precios3",
+  4: "lineal4",
+  5: "exponencial5"
+};
+
+const SOLUTION_PASSWORD = "matitb2025"; // ← clave maestra para descargar soluciones
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;--border:#21262D;
+  --violet:#8B5CF6;--violet-dim:#1e1340;
+  --emerald:#10B981;--emerald-dim:#052e16;
+  --amber:#F59E0B;--amber-dim:#2d2208;
+  --red:#FF7B72;--muted:#8B949E;--text:#E6EDF3;--radius:10px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65}
+
+nav{position:sticky;top:0;z-index:200;background:rgba(13,17,23,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;
+  justify-content:space-between;padding:0 2rem;height:54px;gap:12px}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;
+  color:var(--violet);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-brand .sep{color:var(--border)}
+.nav-brand .dim{color:var(--muted);font-weight:400}
+.nav-timer{font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--amber);display:flex;align-items:center;gap:6px}
+#td{font-size:16px;font-weight:700;min-width:58px}
+.tbtn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);
+  font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:5px;
+  cursor:pointer;transition:all .2s}
+.tbtn:hover{color:var(--text);border-color:var(--muted)}
+.tbtn.on{background:var(--violet-dim);color:var(--violet);border-color:var(--violet)}
+
+.hero{max-width:820px;margin:0 auto;padding:56px 1.5rem 36px;text-align:center}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:18px;
+  display:flex;align-items:center;justify-content:center;gap:10px}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:1;max-width:60px;height:1px;background:var(--border)}
+.hero h1{font-family:'JetBrains Mono',monospace;font-size:clamp(1.8rem,4.5vw,2.8rem);
+  font-weight:700;line-height:1.1;margin-bottom:10px}
+.hero h1 .ac{color:var(--violet)}
+.hero h1 .dm{color:var(--muted)}
+.hero p{color:var(--muted);font-size:15px;max-width:500px;margin:0 auto 28px}
+.hero-meta{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;
+  color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace}
+.hero-meta span{display:flex;align-items:center;gap:5px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block}
+
+.wrap{max-width:880px;margin:0 auto;padding:0 1.5rem}
+
+.instr-box{background:var(--violet-dim);border:1px solid rgba(139,92,246,.25);
+  border-radius:var(--radius);padding:20px 24px;margin-bottom:36px}
+.instr-box h3{font-family:'JetBrains Mono',monospace;font-size:12px;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--violet);margin-bottom:10px}
+.instr-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.instr-list li{font-size:14px;color:var(--muted);display:flex;gap:8px}
+.instr-list li::before{content:'→';color:var(--violet);flex-shrink:0}
+.instr-list li strong{color:var(--text)}
+
+.exercises{display:flex;flex-direction:column;gap:28px;padding-bottom:72px}
+
+.card{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);
+  overflow:hidden;transition:border-color .3s}
+.card.unlocked{border-color:var(--violet)}
+
+.lock-overlay{padding:28px 32px;display:flex;flex-direction:column;align-items:center;
+  gap:14px;text-align:center}
+.lock-icon{width:42px;height:42px;border-radius:9px;background:var(--surface2);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.lock-title{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:var(--muted)}
+.lock-sub{font-size:13px;color:var(--muted);opacity:.65}
+.lock-form{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.lock-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 14px;border-radius:7px;
+  outline:none;transition:border-color .2s;width:170px}
+.lock-input:focus{border-color:var(--violet)}
+.lock-input.err{border-color:var(--red);animation:shake .3s}
+.lock-input::placeholder{color:var(--muted);opacity:.5}
+.btn-unlock{background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 16px;border-radius:7px;
+  cursor:pointer;transition:all .2s}
+.btn-unlock:hover{border-color:var(--violet);color:var(--violet)}
+.lock-err{font-size:12px;color:var(--red);font-family:'JetBrains Mono',monospace}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.card-content{display:none}
+.card.unlocked .card-content{display:block}
+.card.unlocked .lock-overlay{display:none}
+
+.card-header{display:flex;align-items:flex-start;gap:14px;padding:22px 26px 18px;
+  border-bottom:1px solid var(--border)}
+.card-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.08em;color:var(--violet);background:var(--violet-dim);
+  border:1px solid rgba(139,92,246,.3);padding:3px 10px;border-radius:4px;
+  white-space:nowrap;margin-top:3px;flex-shrink:0}
+.card-title{font-size:18px;font-weight:700;margin-bottom:3px}
+.card-desc{color:var(--muted);font-size:13px}
+.card-tags{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.tag{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.t-v{background:rgba(139,92,246,.1);color:var(--violet);border:1px solid rgba(139,92,246,.2)}
+.t-g{background:rgba(16,185,129,.1);color:var(--emerald);border:1px solid rgba(16,185,129,.2)}
+.t-a{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+
+.card-body{display:grid;grid-template-columns:1fr 1fr}
+@media(max-width:640px){.card-body{grid-template-columns:1fr}}
+.card-left{padding:22px 26px;border-right:1px solid var(--border)}
+.card-right{padding:22px 26px}
+@media(max-width:640px){.card-left{border-right:none;border-bottom:1px solid var(--border)}}
+
+.slabel{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
+.req-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.req-list li{font-size:13px;display:flex;gap:8px;color:var(--muted)}
+.req-list li::before{content:'▸';color:var(--violet);font-size:11px;margin-top:4px;flex-shrink:0}
+.req-list li strong{color:var(--text)}
+
+.steps{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;gap:9px;align-items:flex-start}
+.sn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--violet);
+  background:var(--violet-dim);border:1px solid rgba(139,92,246,.25);
+  min-width:21px;height:21px;border-radius:4px;display:flex;align-items:center;
+  justify-content:center;margin-top:2px;flex-shrink:0}
+.st{font-size:13px;color:var(--text);line-height:1.5}
+.ic{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surface2);
+  border:1px solid var(--border);color:#79C0FF;padding:1px 6px;border-radius:4px}
+
+.formula-display{background:#010409;border:1px solid var(--border);border-radius:8px;
+  padding:14px 16px;margin-bottom:14px;text-align:center}
+.formula-display .fd-main{font-family:'JetBrains Mono',monospace;font-size:15px;
+  font-weight:700;color:var(--violet)}
+
+.given-data{background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  padding:12px 16px;margin-bottom:14px}
+.given-data .gd-label{font-family:'JetBrains Mono',monospace;font-size:10px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.given-data .gd-item{font-size:13px;color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1.7}
+.given-data .gd-item span{color:var(--emerald)}
+
+.card-footer{padding:14px 26px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sol-note{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);flex:1;min-width:140px}
+.sol-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sol-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:13px;padding:7px 12px;border-radius:7px;
+  outline:none;transition:border-color .2s;width:150px}
+.sol-input:focus{border-color:var(--amber)}
+.sol-input.err{border-color:var(--red);animation:shake .3s}
+.sol-input::placeholder{color:var(--muted);opacity:.5}
+.btn-sol{display:inline-flex;align-items:center;gap:6px;background:var(--amber);color:#0D1117;
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;padding:7px 14px;
+  border-radius:7px;border:none;cursor:pointer;transition:opacity .2s,transform .15s;white-space:nowrap}
+.btn-sol:hover{opacity:.85;transform:translateY(-1px)}
+.sol-err{font-size:12px;color:var(--red);font-family:'JetBrains Mono',monospace;width:100%}
+.sol-ok{font-size:12px;color:var(--emerald);font-family:'JetBrains Mono',monospace;width:100%}
+
+.toast{position:fixed;bottom:22px;right:22px;z-index:999;background:var(--violet-dim);
+  border:1px solid var(--violet);color:var(--violet);font-family:'JetBrains Mono',monospace;
+  font-size:13px;padding:10px 18px;border-radius:8px;opacity:0;transform:translateY(8px);
+  transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+footer{border-top:1px solid var(--border);padding:26px 2rem;text-align:center;color:var(--muted);
+  font-size:13px;font-family:'JetBrains Mono',monospace}
+footer span{color:var(--violet)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19h16M4 19V5l8 7 8-7v14"/></svg>
+    MAT <span class="sep">/</span> <span class="dim">semana-1</span> <span class="sep">/</span> taller-grupos
+  </div>
+  <div class="nav-timer">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span id="td">00:00</span>
+    <div style="display:flex;gap:4px">
+      <button class="tbtn" id="tbs" onclick="tStart()">▶</button>
+      <button class="tbtn" onclick="tPause()">⏸</button>
+      <button class="tbtn" onclick="tReset()">↺</button>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Taller en grupos · Semana 1 · Matemáticas Aplicadas</div>
+  <h1><span class="dm">Taller —</span><br><span class="ac">Aritmética y Álgebra</span></h1>
+  <p>Cada grupo recibe una clave de acceso para resolver su ejercicio. Al finalizar, el docente entrega la clave de solución.</p>
+  <div class="hero-meta">
+    <span><span class="dot"></span> 5 grupos</span>
+    <span><span class="dot"></span> 5 ejercicios</span>
+    <span><span class="dot"></span> Porcentajes · Funciones</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="instr-box">
+    <h3>// Instrucciones</h3>
+    <ul class="instr-list">
+      <li><strong>Paso 1:</strong> El docente te asigna tu número de grupo y la clave de acceso.</li>
+      <li><strong>Paso 2:</strong> Ingresa la clave en tu ejercicio y haz clic en Desbloquear.</li>
+      <li><strong>Paso 3:</strong> Resuelve el ejercicio en tu cuaderno o en el documento de entrega siguiendo el paso a paso.</li>
+      <li><strong>Paso 4:</strong> Cuando el docente lo indique, ingresa la <strong>clave de solución</strong> para descargar el desarrollo completo.</li>
+    </ul>
+  </div>
+
+  <div class="exercises">
+
+    <!-- ═══════════════ EJERCICIO 1 ═══════════════ -->
+    <div class="card" id="card-1">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 1 — Porcentajes en Costos</div>
+        <div class="lock-sub">Solo el Grupo 1 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-1" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(1)">
+          <button class="btn-unlock" onclick="unlock(1)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-1" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 1</div>
+          <div>
+            <div class="card-title">Porcentajes en Costos de Producción</div>
+            <div class="card-desc">Calcular costo total, costo variable y su representación porcentual</div>
+          </div>
+          <div class="card-tags"><span class="tag t-v">% porcentaje</span><span class="tag t-g">C(x) = Cf+Cv</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Datos del ejercicio</div>
+            <div class="given-data">
+              <div class="gd-label">EMPRESA: "Café Andino S.A."</div>
+              <div class="gd-item">Costo fijo: <span>$300</span></div>
+              <div class="gd-item">Costo variable por unidad: <span>$8</span></div>
+              <div class="gd-item">Modelo: <span>C(x) = 8x + 300</span></div>
+            </div>
+            <div class="slabel">// Qué deben calcular</div>
+            <ul class="req-list">
+              <li>El <strong>costo total</strong> para producir 40 sacos de café</li>
+              <li>El <strong>costo variable total</strong> a 40 sacos</li>
+              <li>Qué <strong>porcentaje</strong> del costo total representa el costo variable</li>
+              <li>El <strong>costo promedio</strong> por saco a 40 unidades</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Sustituye x = 40 en <span class="ic">C(x) = 8x + 300</span></div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Calcula Cv = 8 × 40</div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Usa <span class="ic">%Cv = (Cv / C(40)) × 100</span></div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Divide <span class="ic">C(40) / 40</span> para el costo promedio</div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Fórmulas que necesitas</div>
+            <div class="formula-display"><div class="fd-main">C(x) = Cf + Cv·x</div></div>
+            <div class="formula-display"><div class="fd-main">%Cv = (Cv / Ctotal) × 100</div></div>
+            <div class="formula-display"><div class="fd-main">Cp = C(x) / x</div></div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-1" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(1)">
+            <button class="btn-sol" onclick="dlSol(1)">⬇ Descargar solución</button>
+            <div class="sol-err" id="se-1" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-1" style="display:none">✓ Descargando solucion_porcentajes.txt…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ EJERCICIO 2 ═══════════════ -->
+    <div class="card" id="card-2">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 2 — Proporciones y Regla de Tres</div>
+        <div class="lock-sub">Solo el Grupo 2 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-2" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(2)">
+          <button class="btn-unlock" onclick="unlock(2)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-2" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 2</div>
+          <div>
+            <div class="card-title">Proporciones y Regla de Tres</div>
+            <div class="card-desc">Calcular insumos necesarios usando proporción directa</div>
+          </div>
+          <div class="card-tags"><span class="tag t-v">Proporción</span><span class="tag t-g">Regla de tres</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Datos del ejercicio</div>
+            <div class="given-data">
+              <div class="gd-label">PANADERÍA "El Trigal"</div>
+              <div class="gd-item">12 panes necesitan: <span>3 kg de harina</span></div>
+              <div class="gd-item">Pedido especial: <span>50 panes</span></div>
+              <div class="gd-item">Tiempo de horneado: <span>25 min cada 12 panes</span></div>
+            </div>
+            <div class="slabel">// Qué deben calcular</div>
+            <ul class="req-list">
+              <li>¿Cuántos <strong>kg de harina</strong> se necesitan para 50 panes?</li>
+              <li>Si el horno solo puede hornear 12 panes a la vez, ¿cuánto <strong>tiempo total</strong> tomará hornear los 50 panes?</li>
+              <li>Si el kg de harina cuesta $1.20, ¿cuál es el <strong>costo total</strong> de harina para el pedido?</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Plantea la proporción: <span class="ic">12 panes / 3 kg = 50 panes / x kg</span></div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Despeja x con regla de tres directa</div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Para el tiempo, calcula cuántas tandas de 12 caben en 50 (redondea hacia arriba)</div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Multiplica tandas × 25 min para el tiempo total</div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Fórmula que necesitas</div>
+            <div class="formula-display"><div class="fd-main">a/b = c/d  →  d = (b · c) / a</div></div>
+            <div class="given-data" style="margin-top:14px">
+              <div class="gd-label">PISTA</div>
+              <div class="gd-item">50 ÷ 12 = <span>4,17</span> → se necesitan 5 tandas completas</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-2" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(2)">
+            <button class="btn-sol" onclick="dlSol(2)">⬇ Descargar solución</button>
+            <div class="sol-err" id="se-2" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-2" style="display:none">✓ Descargando solucion_proporciones.txt…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ EJERCICIO 3 ═══════════════ -->
+    <div class="card" id="card-3">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 3 — Precios, Márgenes y Comisiones</div>
+        <div class="lock-sub">Solo el Grupo 3 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-3" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(3)">
+          <button class="btn-unlock" onclick="unlock(3)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-3" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 3</div>
+          <div>
+            <div class="card-title">Precios, Márgenes de Ganancia y Comisiones</div>
+            <div class="card-desc">Calcular precio de venta, margen y comisión de un vendedor</div>
+          </div>
+          <div class="card-tags"><span class="tag t-v">Margen</span><span class="tag t-g">Comisión</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Datos del ejercicio</div>
+            <div class="given-data">
+              <div class="gd-label">TIENDA "TecnoMóvil"</div>
+              <div class="gd-item">Costo del producto: <span>$180</span></div>
+              <div class="gd-item">Margen de ganancia deseado: <span>35%</span></div>
+              <div class="gd-item">Comisión del vendedor: <span>4% sobre venta</span></div>
+              <div class="gd-item">Unidades vendidas: <span>15</span></div>
+            </div>
+            <div class="slabel">// Qué deben calcular</div>
+            <ul class="req-list">
+              <li>El <strong>precio de venta</strong> con el margen del 35% aplicado sobre el costo</li>
+              <li>La <strong>ganancia</strong> por unidad vendida</li>
+              <li>La <strong>comisión total</strong> del vendedor por las 15 unidades</li>
+              <li>La <strong>ganancia neta</strong> de la tienda después de pagar la comisión</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Precio venta = Costo + (Costo × 35%)</div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Ganancia unitaria = Precio venta − Costo</div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Ingreso total = Precio venta × 15 unidades</div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Comisión total = Ingreso total × 4%</div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Fórmulas que necesitas</div>
+            <div class="formula-display"><div class="fd-main">PV = Costo × (1 + %margen)</div></div>
+            <div class="formula-display"><div class="fd-main">Comisión = Ingreso × %comisión</div></div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-3" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(3)">
+            <button class="btn-sol" onclick="dlSol(3)">⬇ Descargar solución</button>
+            <div class="sol-err" id="se-3" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-3" style="display:none">✓ Descargando solucion_precios.txt…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ EJERCICIO 4 ═══════════════ -->
+    <div class="card" id="card-4">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 4 — Ecuaciones Lineales</div>
+        <div class="lock-sub">Solo el Grupo 4 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-4" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(4)">
+          <button class="btn-unlock" onclick="unlock(4)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-4" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 4</div>
+          <div>
+            <div class="card-title">Ecuaciones Lineales aplicadas</div>
+            <div class="card-desc">Hallar el punto de equilibrio entre costo e ingreso</div>
+          </div>
+          <div class="card-tags"><span class="tag t-v">Ec. lineal</span><span class="tag t-g">Punto equilibrio</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Datos del ejercicio</div>
+            <div class="given-data">
+              <div class="gd-label">EMPRESA "Dulces Quito"</div>
+              <div class="gd-item">Costo: <span>C(x) = 4x + 600</span></div>
+              <div class="gd-item">Precio de venta por unidad: <span>$10</span></div>
+              <div class="gd-item">Ingreso: <span>I(x) = 10x</span></div>
+            </div>
+            <div class="slabel">// Qué deben calcular</div>
+            <ul class="req-list">
+              <li>El <strong>punto de equilibrio</strong> — la cantidad x donde Costo = Ingreso</li>
+              <li>El costo y el ingreso en ese punto (deben ser iguales)</li>
+              <li>La <strong>utilidad</strong> si se venden 150 unidades</li>
+              <li>¿Cuántas unidades hay que vender para una <strong>utilidad de $500</strong>?</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Iguala: <span class="ic">4x + 600 = 10x</span></div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Despeja x: pasa los términos con x a un lado</div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Para la utilidad: <span class="ic">U(x) = I(x) − C(x) = 10x − (4x+600) = 6x − 600</span></div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Para U=500: resuelve <span class="ic">6x − 600 = 500</span></div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Fórmulas que necesitas</div>
+            <div class="formula-display"><div class="fd-main">C(x) = I(x)  →  punto de equilibrio</div></div>
+            <div class="formula-display"><div class="fd-main">U(x) = I(x) − C(x)</div></div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-4" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(4)">
+            <button class="btn-sol" onclick="dlSol(4)">⬇ Descargar solución</button>
+            <div class="sol-err" id="se-4" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-4" style="display:none">✓ Descargando solucion_ec_lineal.txt…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ EJERCICIO 5 ═══════════════ -->
+    <div class="card" id="card-5">
+      <div class="lock-overlay">
+        <div class="lock-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="lock-title">Ejercicio 5 — Funciones Exponenciales</div>
+        <div class="lock-sub">Solo el Grupo 5 puede acceder</div>
+        <div class="lock-form">
+          <input class="lock-input" id="ai-5" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')unlock(5)">
+          <button class="btn-unlock" onclick="unlock(5)">Desbloquear →</button>
+        </div>
+        <div class="lock-err" id="ae-5" style="display:none">Clave incorrecta.</div>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <div class="card-num">GRUPO 5</div>
+          <div>
+            <div class="card-title">Funciones Exponenciales — Crecimiento de Inversión</div>
+            <div class="card-desc">Calcular el valor futuro de una inversión con crecimiento exponencial</div>
+          </div>
+          <div class="card-tags"><span class="tag t-v">f(x) = a·eᵏˣ</span><span class="tag t-g">Interés continuo</span></div>
+        </div>
+        <div class="card-body">
+          <div class="card-left">
+            <div class="slabel">// Datos del ejercicio</div>
+            <div class="given-data">
+              <div class="gd-label">INVERSIÓN — Cooperativa "Ahorro Ya"</div>
+              <div class="gd-item">Inversión inicial: <span>$5,000</span></div>
+              <div class="gd-item">Tasa de crecimiento anual: <span>7%</span></div>
+              <div class="gd-item">Función: <span>f(x) = 5000 · e^(0,07x)</span></div>
+            </div>
+            <div class="slabel">// Qué deben calcular</div>
+            <ul class="req-list">
+              <li>El valor de la inversión cuando <strong>x = 2 años</strong></li>
+              <li>El valor de la inversión cuando <strong>x = 5 años</strong></li>
+              <li>¿Cuánto <strong>creció en dólares</strong> entre el año 2 y el año 5?</li>
+              <li>Construyan una <strong>tabla de valores</strong> para x = 0, 1, 2, 3, 4, 5 y describan la forma de la curva</li>
+            </ul>
+            <div class="slabel">// Paso a paso</div>
+            <div class="steps">
+              <div class="step"><div class="sn">1</div><div class="st">Sustituye x en el exponente: <span class="ic">0,07 × x</span></div></div>
+              <div class="step"><div class="sn">2</div><div class="st">Calcula <span class="ic">e</span> elevado a ese resultado (e ≈ 2,71828)</div></div>
+              <div class="step"><div class="sn">3</div><div class="st">Multiplica por 5000</div></div>
+              <div class="step"><div class="sn">4</div><div class="st">Repite para cada año y arma la tabla</div></div>
+            </div>
+          </div>
+          <div class="card-right">
+            <div class="slabel">// Fórmula que necesitas</div>
+            <div class="formula-display"><div class="fd-main">f(x) = a · e^(kx)</div></div>
+            <div class="given-data" style="margin-top:14px">
+              <div class="gd-label">VALORES DE e^x ÚTILES</div>
+              <div class="gd-item">e^0,07 ≈ <span>1,0725</span></div>
+              <div class="gd-item">e^0,14 ≈ <span>1,1503</span></div>
+              <div class="gd-item">e^0,35 ≈ <span>1,4191</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="sol-note">🔒 Ingresa la clave cuando el docente la indique</div>
+          <div class="sol-form">
+            <input class="sol-input" id="si-5" type="password" placeholder="clave solución" onkeydown="if(event.key==='Enter')dlSol(5)">
+            <button class="btn-sol" onclick="dlSol(5)">⬇ Descargar solución</button>
+            <div class="sol-err" id="se-5" style="display:none">Clave incorrecta.</div>
+            <div class="sol-ok"  id="so-5" style="display:none">✓ Descargando solucion_exponencial.txt…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /exercises -->
+</div><!-- /wrap -->
+
+<footer>
+  ITB — Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span>Taller — Matemáticas Aplicadas</span> · Semana 1
+</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+function unlock(n) {
+  const inp = document.getElementById(`ai-${n}`);
+  const err = document.getElementById(`ae-${n}`);
+  if (inp.value.trim() === ACCESS_PASSWORDS[n]) {
+    const card = document.getElementById(`card-${n}`);
+    card.classList.add('unlocked');
+    card.scrollIntoView({behavior:'smooth',block:'start'});
+    showToast(`✓ Ejercicio ${n} desbloqueado`);
+  } else {
+    inp.classList.add('err');
+    err.style.display = 'block';
+    setTimeout(()=>inp.classList.remove('err'),400);
+    inp.value=''; inp.focus();
+  }
+}
+
+const solutions = {
+  1:{file:'solucion_porcentajes.txt',content:`SOLUCIÓN — Ejercicio 1: Porcentajes en Costos
+Matemáticas Aplicadas · ITB · Semana 1
+==============================================
+
+DATOS
+Costo fijo: $300
+Costo variable por unidad: $8
+Modelo: C(x) = 8x + 300
+
+1) Costo total para 40 sacos
+C(40) = 8(40) + 300 = 320 + 300 = $620
+
+2) Costo variable total
+Cv = 8 x 40 = $320
+
+3) Porcentaje del costo variable
+%Cv = (Cv / C(40)) x 100 = (320 / 620) x 100 = 51,61%
+
+4) Costo promedio por saco
+Cp(40) = C(40) / 40 = 620 / 40 = $15,50
+
+RESPUESTA FINAL
+El costo total es $620, el costo variable representa el 51,61%
+del costo total, y el costo promedio por saco es de $15,50.
+`},
+  2:{file:'solucion_proporciones.txt',content:`SOLUCIÓN — Ejercicio 2: Proporciones y Regla de Tres
+Matemáticas Aplicadas · ITB · Semana 1
+==============================================
+
+DATOS
+12 panes necesitan 3 kg de harina
+Pedido: 50 panes
+Horno: 12 panes por tanda, 25 min cada tanda
+Precio harina: $1.20/kg
+
+1) Harina necesaria para 50 panes
+12/3 = 50/x
+x = (3 x 50) / 12 = 150/12 = 12,5 kg de harina
+
+2) Tiempo total de horneado
+50 panes / 12 panes por tanda = 4,17 → se necesitan 5 tandas
+Tiempo total = 5 x 25 min = 125 minutos (2 horas 5 min)
+
+3) Costo total de harina
+Costo = 12,5 kg x $1.20 = $15,00
+
+RESPUESTA FINAL
+Se necesitan 12,5 kg de harina, el horneado toma 125 minutos
+(5 tandas), y el costo de harina es de $15,00.
+`},
+  3:{file:'solucion_precios.txt',content:`SOLUCIÓN — Ejercicio 3: Precios, Márgenes y Comisiones
+Matemáticas Aplicadas · ITB · Semana 1
+==============================================
+
+DATOS
+Costo del producto: $180
+Margen de ganancia: 35%
+Comisión del vendedor: 4% sobre venta
+Unidades vendidas: 15
+
+1) Precio de venta
+PV = Costo x (1 + %margen) = 180 x 1,35 = $243
+
+2) Ganancia por unidad
+Ganancia = PV - Costo = 243 - 180 = $63
+
+3) Comisión total del vendedor
+Ingreso total = 243 x 15 = $3.645
+Comisión = 3.645 x 0,04 = $145,80
+
+4) Ganancia neta de la tienda
+Ganancia bruta total = 63 x 15 = $945
+Ganancia neta = 945 - 145,80 = $799,20
+
+RESPUESTA FINAL
+El precio de venta es $243, la comisión total del vendedor
+es $145,80, y la ganancia neta de la tienda es $799,20.
+`},
+  4:{file:'solucion_ec_lineal.txt',content:`SOLUCIÓN — Ejercicio 4: Ecuaciones Lineales
+Matemáticas Aplicadas · ITB · Semana 1
+==============================================
+
+DATOS
+Costo: C(x) = 4x + 600
+Ingreso: I(x) = 10x
+
+1) Punto de equilibrio (C(x) = I(x))
+4x + 600 = 10x
+600 = 10x - 4x
+600 = 6x
+x = 100 unidades
+
+Verificación: C(100) = 4(100)+600 = 1000
+              I(100) = 10(100) = 1000 ✓ (coinciden)
+
+2) Utilidad al vender 150 unidades
+U(x) = I(x) - C(x) = 10x - (4x+600) = 6x - 600
+U(150) = 6(150) - 600 = 900 - 600 = $300
+
+3) Unidades para utilidad de $500
+6x - 600 = 500
+6x = 1100
+x = 183,33 → se necesitan 184 unidades (redondeado hacia arriba)
+
+RESPUESTA FINAL
+El punto de equilibrio es 100 unidades (donde costo = ingreso = $1000).
+Con 150 unidades la utilidad es de $300.
+Para una utilidad de $500 se necesitan vender 184 unidades.
+`},
+  5:{file:'solucion_exponencial.txt',content:`SOLUCIÓN — Ejercicio 5: Funciones Exponenciales
+Matemáticas Aplicadas · ITB · Semana 1
+==============================================
+
+DATOS
+Inversión inicial: $5,000
+Tasa de crecimiento: 7% anual
+Función: f(x) = 5000 . e^(0,07x)
+
+1) Valor a los 2 años
+f(2) = 5000 . e^(0,14) = 5000 x 1,1503 = $5.751,50
+
+2) Valor a los 5 años
+f(5) = 5000 . e^(0,35) = 5000 x 1,4191 = $7.095,50
+
+3) Crecimiento entre el año 2 y el año 5
+Crecimiento = f(5) - f(2) = 7095,50 - 5751,50 = $1.344,00
+
+4) Tabla de valores
+x=0: f(0) = 5000 . e^0    = 5000 . 1      = $5.000,00
+x=1: f(1) = 5000 . e^0,07 = 5000 . 1,0725 = $5.362,50
+x=2: f(2) = 5000 . e^0,14 = 5000 . 1,1503 = $5.751,50
+x=3: f(3) = 5000 . e^0,21 = 5000 . 1,2337 = $6.168,50
+x=4: f(4) = 5000 . e^0,28 = 5000 . 1,3231 = $6.615,50
+x=5: f(5) = 5000 . e^0,35 = 5000 . 1,4191 = $7.095,50
+
+DESCRIPCIÓN DE LA CURVA
+La curva crece de forma acelerada (no en línea recta): cada año
+el incremento en dólares es mayor que el anterior. Esto es
+característico de TODO crecimiento exponencial -- el cambio
+es proporcional al valor actual, no constante.
+
+RESPUESTA FINAL
+A los 2 años: $5.751,50 — A los 5 años: $7.095,50
+Crecimiento en ese período: $1.344,00
+`}
+};
+
+function dlSol(n) {
+  const inp = document.getElementById(`si-${n}`);
+  const err = document.getElementById(`se-${n}`);
+  const ok  = document.getElementById(`so-${n}`);
+  err.style.display = ok.style.display = 'none';
+
+  if (inp.value.trim() === SOLUTION_PASSWORD) {
+    const {file, content} = solutions[n];
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([content],{type:'text/plain;charset=utf-8'}));
+    a.download = file; a.click();
+    ok.style.display = 'block';
+    showToast(`✓ ${file} descargado`);
+  } else {
+    inp.classList.add('err');
+    err.style.display = 'block';
+    setTimeout(()=>inp.classList.remove('err'),400);
+    inp.value=''; inp.focus();
+  }
+}
+
+let sec=0,iv=null,run=false;
+function tStart(){if(run)return;run=true;document.getElementById('tbs').classList.add('on');
+  iv=setInterval(()=>{sec++;document.getElementById('td').textContent=
+    String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');},1000);}
+function tPause(){clearInterval(iv);run=false;document.getElementById('tbs').classList.remove('on');}
+function tReset(){tPause();sec=0;document.getElementById('td').textContent='00:00';}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+</script>
+</body>
+</html>

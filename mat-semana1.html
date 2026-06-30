@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana 1 — Matemáticas Aplicadas · ITB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;--border:#21262D;
+  --violet:#8B5CF6;--violet-dim:#1e1340;
+  --emerald:#10B981;--emerald-dim:#052e16;
+  --rose:#F43F5E;--rose-dim:#1f0814;
+  --amber:#F59E0B;--amber-dim:#2d2208;
+  --blue:#3B82F6;--blue-dim:#0c1d3f;
+  --muted:#8B949E;--text:#E6EDF3;--radius:10px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;
+  justify-content:space-between;padding:0 2rem;height:54px;gap:12px}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;
+  color:var(--violet);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-brand .sep{color:var(--border)}
+.nav-brand .dim{color:var(--muted);font-weight:400}
+.nav-links{display:flex;gap:4px;overflow-x:auto}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:12px;font-family:'JetBrains Mono',monospace;
+  padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap}
+.nav-links a:hover{color:var(--text);background:var(--surface)}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--violet-dim);
+  border:1px solid rgba(139,92,246,.4);color:var(--violet);padding:3px 10px;border-radius:20px;white-space:nowrap}
+
+/* ── HERO ── */
+.hero{max-width:920px;margin:0 auto;padding:60px 1.5rem 48px;text-align:center}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px;
+  display:flex;align-items:center;justify-content:center;gap:10px}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:1;max-width:70px;height:1px;background:var(--border)}
+.hero h1{font-family:'JetBrains Mono',monospace;font-size:clamp(2rem,5vw,3.2rem);
+  font-weight:700;line-height:1.1;margin-bottom:8px}
+.hero h1 .ac{color:var(--violet)}
+.hero h1 .dm{color:var(--muted)}
+.hero-sub{font-family:'JetBrains Mono',monospace;font-size:clamp(.9rem,2vw,1.2rem);
+  color:var(--muted);margin-bottom:16px}
+.hero p{color:var(--muted);font-size:15px;max-width:560px;margin:0 auto 32px}
+.hero-chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.chip{font-family:'JetBrains Mono',monospace;font-size:12px;padding:4px 12px;
+  border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--surface)}
+.chip.active{background:var(--violet-dim);border-color:var(--violet);color:var(--violet)}
+
+/* ── WRAP ── */
+.wrap{max-width:920px;margin:0 auto;padding:0 1.5rem}
+
+/* ── MODULE ── */
+.module{margin-bottom:56px}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec-title{font-size:22px;font-weight:700;margin-bottom:8px}
+.sec-desc{font-size:14px;color:var(--muted);max-width:700px;line-height:1.7}
+.sec-desc strong{color:var(--text)}
+
+/* ── CONCEPT GRID ── */
+.concepts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0}
+.concept-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:16px}
+.cc-icon{font-size:20px;margin-bottom:8px}
+.cc-title{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--violet);margin-bottom:5px}
+.cc-desc{font-size:12.5px;color:var(--muted);line-height:1.6}
+
+/* ── FORMULA BOX ── */
+.formula-box{background:#010409;border:1px solid var(--border);border-radius:9px;
+  padding:18px 22px;margin:16px 0;text-align:center}
+.formula-box .f-main{font-family:'JetBrains Mono',monospace;font-size:18px;
+  font-weight:700;color:var(--violet);margin-bottom:6px}
+.formula-box .f-sub{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+
+/* ── CODE/CALC BLOCK ── */
+.code-block{background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin:16px 0}
+.code-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;
+  background:var(--surface2);border-bottom:1px solid var(--border)}
+.code-dots{display:flex;gap:5px}
+.code-dots span{width:10px;height:10px;border-radius:50%}
+.d1{background:#FF5F56}.d2{background:#FFBD2E}.d3{background:#27C93F}
+.code-file{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.code-body{padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9}
+.cb-line{display:flex;gap:8px;margin-bottom:4px}
+.cb-label{color:var(--muted);min-width:24px;flex-shrink:0}
+.cb-eq{color:var(--text)}
+.cb-result{color:var(--emerald);font-weight:700}
+.cb-formula{color:var(--violet)}
+
+/* ── ANSWER BOX ── */
+.answer-box{background:var(--emerald-dim);border:1px solid rgba(16,185,129,.3);
+  border-radius:8px;padding:13px 17px;margin:14px 0;display:flex;gap:10px;align-items:flex-start}
+.ab-icon{color:var(--emerald);font-size:16px;flex-shrink:0}
+.ab-text{font-size:13.5px;color:var(--text);line-height:1.6}
+.ab-text strong{color:var(--emerald)}
+
+/* ── STEP CARD (exercise) ── */
+.exercise{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:20px}
+.ex-header{display:flex;align-items:center;gap:12px;padding:16px 20px;
+  border-bottom:1px solid var(--border);background:var(--surface2)}
+.ex-letter{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;
+  color:var(--violet);background:var(--violet-dim);border:1px solid rgba(139,92,246,.3);
+  min-width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ex-question{font-size:14px;font-weight:600;color:var(--text)}
+.ex-body{padding:18px 20px}
+
+/* ── TIP/WARN ── */
+.tryit{background:var(--emerald-dim);border:1px solid rgba(16,185,129,.3);border-radius:8px;
+  padding:13px 17px;margin:14px 0;display:flex;gap:10px;align-items:flex-start}
+.tryit-text{font-size:13px;color:var(--text);line-height:1.6}
+.tryit-text strong{color:var(--emerald)}
+.warnbox{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.25);border-radius:8px;
+  padding:13px 17px;margin:14px 0;display:flex;gap:10px;align-items:flex-start}
+.warnbox-text{font-size:13px;color:var(--muted);line-height:1.6}
+.warnbox-text strong{color:var(--amber)}
+
+/* ── DATA TABLE ── */
+.data-table{width:100%;border-collapse:collapse;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:13px}
+.data-table th{background:var(--violet-dim);color:var(--violet);font-size:11px;
+  text-transform:uppercase;letter-spacing:.05em;padding:8px 12px;border:1px solid var(--border);text-align:center}
+.data-table td{padding:7px 12px;border:1px solid var(--border);text-align:center;color:var(--text)}
+.data-table tr:nth-child(even) td{background:var(--surface2)}
+
+/* ── GRAPH WRAP ── */
+.graph-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:9px;
+  padding:16px;margin:12px 0}
+.graph-title{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  color:var(--violet);margin-bottom:8px;text-align:center}
+.graph-wrap svg{width:100%;height:auto;display:block}
+
+/* ── TWO COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+@media(max-width:680px){.two-col{grid-template-columns:1fr}}
+
+/* ── CASE INTRO BOX ── */
+.case-box{background:var(--violet-dim);border:1px solid rgba(139,92,246,.3);
+  border-radius:var(--radius);padding:22px 26px;margin-bottom:28px}
+.case-box .cb-title{font-family:'JetBrains Mono',monospace;font-size:12px;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--violet);margin-bottom:10px}
+.case-box .cb-text{font-size:14px;color:var(--text);line-height:1.7}
+.case-box .cb-text strong{color:var(--violet)}
+.case-box .cb-formula{margin-top:14px;font-family:'JetBrains Mono',monospace;
+  font-size:15px;font-weight:700;color:var(--emerald);text-align:center;
+  background:#010409;border:1px solid var(--border);border-radius:6px;padding:10px}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:28px 2rem;text-align:center;
+  color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace}
+footer span{color:var(--violet)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19h16M4 19V5l8 7 8-7v14"/></svg>
+    MAT <span class="sep">/</span> <span class="dim">semana-1</span> <span class="sep">/</span> clase-practica
+  </div>
+  <div class="nav-links">
+    <a href="#porcentajes">Porcentajes</a>
+    <a href="#caso1">Caso 1</a>
+    <a href="#exponenciales">Exponenciales</a>
+    <a href="#logaritmicas">Logarítmicas</a>
+  </div>
+  <div class="nav-badge">∑ Semana 1</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Semana 1 de 6 · Operaciones Aritméticas y Algebraicas</div>
+  <h1><span class="dm">Matemáticas para</span><br><span class="ac">Negocios</span></h1>
+  <div class="hero-sub">Porcentajes · Costos · Funciones exponenciales y logarítmicas</div>
+  <p>Clase práctica resuelta: el caso de "Ecuadorian Fruits S.A." aplicando porcentajes, costos y márgenes — y dos casos de funciones exponenciales y logarítmicas con sus gráficas.</p>
+  <div class="hero-chips">
+    <span class="chip">Porcentajes</span>
+    <span class="chip">Proporciones</span>
+    <span class="chip">Funciones de costo</span>
+    <span class="chip active">● Clase práctica 1</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ═══════════════════════════════════════
+       MÓDULO 1: PORCENTAJES Y PROPORCIONES
+       ═══════════════════════════════════════ -->
+  <div class="module" id="porcentajes">
+    <div class="sec-tag">// Módulo 1 — Fundamentos</div>
+    <div class="sec-title">Porcentajes, proporciones y regla de tres</div>
+    <div class="sec-desc">Antes de resolver el caso práctico, repasamos las herramientas matemáticas que vamos a usar constantemente en contextos de negocio: porcentajes, proporciones directas e inversas, y cómo calcular precios, márgenes y descuentos.</div>
+
+    <div class="concepts-grid">
+      <div class="concept-card">
+        <div class="cc-icon">％</div>
+        <div class="cc-title">Porcentaje</div>
+        <div class="cc-desc">Representa una parte de 100. Para calcular el x% de un valor V: <code style="font-family:'JetBrains Mono';font-size:11px;color:#8B5CF6">(x/100) × V</code></div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">⚖️</div>
+        <div class="cc-title">Proporción</div>
+        <div class="cc-desc">Igualdad entre dos razones: <code style="font-family:'JetBrains Mono';font-size:11px;color:#8B5CF6">a/b = c/d</code>. Si tres valores se conocen, el cuarto se despeja.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">📐</div>
+        <div class="cc-title">Regla de tres</div>
+        <div class="cc-desc">Método para hallar un valor desconocido a partir de una proporción. Directa: a más, más. Inversa: a más, menos.</div>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">💰</div>
+        <div class="cc-title">Margen de ganancia</div>
+        <div class="cc-desc">Diferencia entre precio de venta y costo, expresada como porcentaje del precio o del costo.</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="formula-box">
+        <div class="f-main">% = (parte / total) × 100</div>
+        <div class="f-sub">Fórmula general de porcentaje</div>
+      </div>
+      <div class="formula-box">
+        <div class="f-main">a/b = c/d  →  c = (a × d) / b</div>
+        <div class="f-sub">Regla de tres directa</div>
+      </div>
+    </div>
+
+    <div class="tryit">
+      <div style="font-size:16px;flex-shrink:0">💡</div>
+      <div class="tryit-text"><strong>Aplicación en negocios:</strong> el IVA en Ecuador es 15%. Un descuento del 10% sobre el ingreso total, una comisión del 5% sobre ventas — todo se calcula con la misma fórmula base de porcentaje.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MÓDULO 2: CLASE PRÁCTICA 1 — CASO RESUELTO
+       ═══════════════════════════════════════ -->
+  <div class="module" id="caso1">
+    <div class="sec-tag">// Clase Práctica 1</div>
+    <div class="sec-title">Caso Práctico Resuelto</div>
+
+    <div class="case-box">
+      <div class="cb-title">// Planteamiento del caso</div>
+      <div class="cb-text">
+        La empresa ecuatoriana <strong>"Ecuadorian Fruits S.A."</strong>, dedicada a la exportación de frutas orgánicas, tiene un costo de producción de su línea de exportación expresado por el siguiente modelo matemático:
+      </div>
+      <div class="cb-formula">C(x) = 5x + 200,&nbsp;&nbsp; donde x = número de cajas de frutas producidas</div>
+      <div class="cb-text" style="margin-top:14px"><strong>Recuerda:</strong> Cx = Cf + Cv &nbsp;(Costo total = Costo fijo + Costo variable)</div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <div class="ex-letter">a</div>
+        <div class="ex-question">¿Cuál es el costo total para producir 30 cajas de exportación?</div>
+      </div>
+      <div class="ex-body">
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">cálculo</div></div>
+          <div class="code-body"><div class="cb-line"><span class="cb-formula">C(30)</span><span class="cb-eq">= 5(30) + 200 = 150 + 200 = </span><span class="cb-result">350</span></div></div>
+        </div>
+        <div class="answer-box"><div class="ab-icon">✓</div><div class="ab-text">El costo total para producir <strong>30 cajas es de $350</strong>.</div></div>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <div class="ex-letter">b</div>
+        <div class="ex-question">Si el costo fijo de producción es $200, ¿cuál es el costo variable total para 30 cajas? ¿Qué porcentaje del costo total representa el costo variable?</div>
+      </div>
+      <div class="ex-body">
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">cálculo del costo variable</div></div>
+          <div class="code-body"><div class="cb-line"><span class="cb-formula">Cv</span><span class="cb-eq">= 5 × 30 = </span><span class="cb-result">150</span></div></div>
+        </div>
+        <div class="sec-tag" style="margin:16px 0 8px;font-size:10px">// Porcentaje del costo variable</div>
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">% Cv</div></div>
+          <div class="code-body"><div class="cb-line"><span class="cb-formula">%Cv</span><span class="cb-eq">= (Cv / C(30)) × 100 = (150 / 350) × 100 = </span><span class="cb-result">42,86%</span></div></div>
+        </div>
+        <div class="answer-box"><div class="ab-icon">✓</div><div class="ab-text">El costo variable total a 30 cajas es de <strong>$150</strong> y en porcentaje representa un <strong>42,86%</strong> del costo total.</div></div>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <div class="ex-letter">c</div>
+        <div class="ex-question">Si la empresa decide producir 50 cajas, calcula el nuevo costo total y el costo promedio por caja.</div>
+      </div>
+      <div class="ex-body">
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">nuevo costo total</div></div>
+          <div class="code-body"><div class="cb-line"><span class="cb-formula">C(50)</span><span class="cb-eq">= 5(50) + 200 = 250 + 200 = </span><span class="cb-result">450</span></div></div>
+        </div>
+        <div class="sec-tag" style="margin:16px 0 8px;font-size:10px">// Costo promedio por caja</div>
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">Cp(50)</div></div>
+          <div class="code-body"><div class="cb-line"><span class="cb-formula">Cp(50)</span><span class="cb-eq">= C(50) / 50 = 450 / 50 = </span><span class="cb-result">9</span></div></div>
+        </div>
+        <div class="answer-box"><div class="ab-icon">✓</div><div class="ab-text">El nuevo costo total para 50 cajas es de <strong>$450</strong> y el costo promedio por caja al producir 50 cajas es de <strong>$9</strong>.</div></div>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <div class="ex-letter">d</div>
+        <div class="ex-question">Comparar el costo promedio por caja al producir 30 y 50 cajas. ¿Cómo cambia el costo promedio al aumentar la producción?</div>
+      </div>
+      <div class="ex-body">
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">costo promedio a 30 cajas</div></div>
+          <div class="code-body"><div class="cb-line"><span class="cb-formula">Cp(30)</span><span class="cb-eq">= C(30) / 30 = 350 / 30 = </span><span class="cb-result">11,67</span></div></div>
+        </div>
+        <div class="sec-tag" style="margin:16px 0 8px;font-size:10px">// Comparación del costo promedio</div>
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">diferencia</div></div>
+          <div class="code-body"><div class="cb-line"><span class="cb-formula">Diferencia</span><span class="cb-eq">= Cp(30) − Cp(50) = 11,67 − 9 = </span><span class="cb-result">2,67</span></div></div>
+        </div>
+        <div class="answer-box"><div class="ab-icon">✓</div><div class="ab-text">El costo promedio por caja al producir 30 cajas es de <strong>$11,67</strong>; sin embargo, es evidente que a medida que aumenta la producción <strong>el costo promedio disminuye</strong> — esto se conoce como <em>economía de escala</em>: el costo fijo se reparte entre más unidades.</div></div>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <div class="ex-letter">e</div>
+        <div class="ex-question">Si la empresa decide reducir el precio de venta a $15 por caja, calcular el nuevo ingreso total al vender 50 cajas y determinar si el ingreso cubre los costos.</div>
+      </div>
+      <div class="ex-body">
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">ingreso total</div></div>
+          <div class="code-body"><div class="cb-line"><span class="cb-formula">I(50)</span><span class="cb-eq">= 15 × 50 = </span><span class="cb-result">750</span></div></div>
+        </div>
+        <div class="sec-tag" style="margin:16px 0 8px;font-size:10px">// ¿Cubre los costos?</div>
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">utilidad</div></div>
+          <div class="code-body"><div class="cb-line"><span class="cb-formula">Utilidad</span><span class="cb-eq">= I(50) − C(50) = 750 − 450 = </span><span class="cb-result">300</span></div></div>
+        </div>
+        <div class="answer-box"><div class="ab-icon">✓</div><div class="ab-text">El ingreso total al vender 50 cajas es <strong>$750</strong>, cubriendo los costos y generando <strong>$300 de ingreso adicional</strong> (utilidad).</div></div>
+      </div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <div class="ex-letter">f</div>
+        <div class="ex-question">Si se aplica IVA al costo total y un descuento del 10% sobre el ingreso total, calcular el nuevo costo total con IVA incluido y el nuevo ingreso total después del descuento.</div>
+      </div>
+      <div class="ex-body">
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">IVA sobre costo total (30 cajas)</div></div>
+          <div class="code-body">
+            <div class="cb-line"><span class="cb-formula">IVA</span><span class="cb-eq">= 15% × C(30) = 350 × 0,15 = </span><span class="cb-result">52,50</span></div>
+            <div class="cb-line"><span class="cb-formula">C total c/IVA</span><span class="cb-eq">= C(30) + IVA = 350 + 52,50 = </span><span class="cb-result">402,50</span></div>
+          </div>
+        </div>
+        <div class="sec-tag" style="margin:16px 0 8px;font-size:10px">// Descuento del 10% sobre el ingreso</div>
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">ingreso con descuento</div></div>
+          <div class="code-body">
+            <div class="cb-line"><span class="cb-formula">Descuento</span><span class="cb-eq">= 10% × I(50) = 750 × 0,10 = </span><span class="cb-result">75</span></div>
+            <div class="cb-line"><span class="cb-formula">I con descuento</span><span class="cb-eq">= I(50) − Descuento = 750 − 75 = </span><span class="cb-result">675</span></div>
+          </div>
+        </div>
+        <div class="answer-box"><div class="ab-icon">✓</div><div class="ab-text">El costo total con IVA incluido es de <strong>$402,50</strong> y el ingreso total después del descuento es de <strong>$675</strong>.</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MÓDULO 3: FUNCIONES EXPONENCIALES
+       ═══════════════════════════════════════ -->
+  <div class="module" id="exponenciales">
+    <div class="sec-tag">// Módulo 3 — Caso Práctico 2</div>
+    <div class="sec-title">Funciones Exponenciales</div>
+    <div class="sec-desc">Las funciones exponenciales modelan crecimiento (o decrecimiento) acelerado — interés compuesto, crecimiento poblacional, depreciación de activos. La forma general es <strong>f(x) = a · bˣ</strong>, donde la variable está en el exponente.</div>
+
+    <div class="case-box">
+      <div class="cb-title">// Planteamiento del caso</div>
+      <div class="cb-text">Una empresa observa que su inversión inicial de <strong>$10,000</strong> crece a una tasa anual del <strong>5%</strong>. La función que representa este crecimiento es:</div>
+      <div class="cb-formula">f(x) = 10000 · e<sup>0,05x</sup>&nbsp;&nbsp; donde x = tiempo en años</div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <div class="ex-letter">a</div>
+        <div class="ex-question">Calcula el valor de la inversión cuando x = 3 años</div>
+      </div>
+      <div class="ex-body">
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">cálculo</div></div>
+          <div class="code-body">
+            <div class="cb-line"><span class="cb-formula">f(3)</span><span class="cb-eq">= 10000 · e</span><sup style="color:var(--text)">0,05(3)</sup></div>
+            <div class="cb-line"><span class="cb-formula">f(3)</span><span class="cb-eq">= 10000 · e</span><sup style="color:var(--text)">0,15</sup></div>
+            <div class="cb-line"><span class="cb-formula">f(3)</span><span class="cb-eq">= 10000 · 1,1618 = </span><span class="cb-result">11.618,34</span></div>
+          </div>
+        </div>
+        <div class="answer-box"><div class="ab-icon">✓</div><div class="ab-text">La inversión después de 3 años es aproximadamente <strong>$11.618</strong>.</div></div>
+      </div>
+    </div>
+
+    <div class="sec-tag" style="margin-top:32px">// b — Representación gráfica de funciones exponenciales</div>
+
+    <div class="two-col">
+      <!-- f(x) = 3^x -->
+      <div>
+        <table class="data-table">
+          <tr><th>x</th><th>y = f(x) = 3ˣ</th></tr>
+          <tr><td>-3</td><td>0,04</td></tr>
+          <tr><td>-2</td><td>0,11</td></tr>
+          <tr><td>-1</td><td>0,33</td></tr>
+          <tr><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>3</td></tr>
+          <tr><td>2</td><td>9</td></tr>
+          <tr><td>3</td><td>27</td></tr>
+        </table>
+      </div>
+      <div class="graph-wrap">
+        <div class="graph-title">f(x) = 3ˣ — crecimiento exponencial</div>
+        <svg id="graph-exp1" viewBox="0 0 280 220"></svg>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <!-- g(x) = (1/4)^x -->
+      <div>
+        <table class="data-table">
+          <tr><th>x</th><th>y = g(x) = (1/4)ˣ</th></tr>
+          <tr><td>-3</td><td>64</td></tr>
+          <tr><td>-2</td><td>16</td></tr>
+          <tr><td>-1</td><td>4</td></tr>
+          <tr><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>0,25</td></tr>
+          <tr><td>2</td><td>0,06</td></tr>
+          <tr><td>3</td><td>0,02</td></tr>
+        </table>
+      </div>
+      <div class="graph-wrap">
+        <div class="graph-title">g(x) = (1/4)ˣ — decrecimiento exponencial</div>
+        <svg id="graph-exp2" viewBox="0 0 280 220"></svg>
+      </div>
+    </div>
+
+    <div class="tryit">
+      <div style="font-size:16px;flex-shrink:0">💡</div>
+      <div class="tryit-text"><strong>Observa la diferencia:</strong> cuando la base es mayor a 1 (como 3ˣ), la función <strong>crece</strong>. Cuando la base está entre 0 y 1 (como (1/4)ˣ), la función <strong>decrece</strong> — esto modela situaciones como depreciación de un activo o desintegración radiactiva.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MÓDULO 4: FUNCIONES LOGARÍTMICAS
+       ═══════════════════════════════════════ -->
+  <div class="module" id="logaritmicas">
+    <div class="sec-tag">// Módulo 4 — Caso Práctico 3</div>
+    <div class="sec-title">Funciones Logarítmicas</div>
+    <div class="sec-desc">El logaritmo es la operación <strong>inversa</strong> de la potenciación. Si <code style="font-family:'JetBrains Mono';font-size:12px;color:#8B5CF6">bˣ = y</code>, entonces <code style="font-family:'JetBrains Mono';font-size:12px;color:#8B5CF6">log_b(y) = x</code>. En negocios, modela fenómenos de crecimiento que se desaceleran — como la satisfacción del cliente o rendimientos decrecientes.</div>
+
+    <div class="case-box">
+      <div class="cb-title">// Planteamiento del caso</div>
+      <div class="cb-text">Una empresa de marketing determina que la satisfacción del cliente <strong>S</strong> con respecto al número de campañas de marketing <strong>x</strong> sigue la función logarítmica:</div>
+      <div class="cb-formula">S(x) = 10 + 5 · ln(x + 1)</div>
+    </div>
+
+    <div class="exercise">
+      <div class="ex-header">
+        <div class="ex-letter">a</div>
+        <div class="ex-question">Calcula la satisfacción del cliente si se realizan 4 campañas</div>
+      </div>
+      <div class="ex-body">
+        <div class="code-block">
+          <div class="code-bar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-file">cálculo</div></div>
+          <div class="code-body">
+            <div class="cb-line"><span class="cb-formula">S(4)</span><span class="cb-eq">= 10 + 5 · ln(4 + 1)</span></div>
+            <div class="cb-line"><span class="cb-formula">S(4)</span><span class="cb-eq">= 10 + 5 · ln(5) = 10 + 5 × 1,61</span></div>
+            <div class="cb-line"><span class="cb-formula">S(4)</span><span class="cb-eq">= 10 + 8,05 = </span><span class="cb-result">18,05</span></div>
+          </div>
+        </div>
+        <div class="answer-box"><div class="ab-icon">✓</div><div class="ab-text">La satisfacción del cliente es de aproximadamente <strong>18,05 unidades</strong> con 4 campañas de marketing.</div></div>
+      </div>
+    </div>
+
+    <div class="sec-tag" style="margin-top:32px">// b — Representación gráfica de funciones logarítmicas</div>
+
+    <div class="two-col">
+      <!-- f(x) = log10(x) -->
+      <div>
+        <table class="data-table">
+          <tr><th>x</th><th>y = f(x) = log₁₀(x)</th></tr>
+          <tr><td>1</td><td>0</td></tr>
+          <tr><td>2</td><td>0,30</td></tr>
+          <tr><td>3</td><td>0,48</td></tr>
+          <tr><td>4</td><td>0,60</td></tr>
+          <tr><td>5</td><td>0,70</td></tr>
+        </table>
+      </div>
+      <div class="graph-wrap">
+        <div class="graph-title">f(x) = log₁₀(x)</div>
+        <svg id="graph-log1" viewBox="0 0 280 220"></svg>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <!-- g(x) = ln(x) -->
+      <div>
+        <table class="data-table">
+          <tr><th>x</th><th>y = g(x) = ln(x)</th></tr>
+          <tr><td>1</td><td>0</td></tr>
+          <tr><td>2</td><td>0,69</td></tr>
+          <tr><td>3</td><td>1,10</td></tr>
+          <tr><td>4</td><td>1,39</td></tr>
+          <tr><td>5</td><td>1,61</td></tr>
+        </table>
+      </div>
+      <div class="graph-wrap">
+        <div class="graph-title">g(x) = ln(x) — logaritmo natural</div>
+        <svg id="graph-log2" viewBox="0 0 280 220"></svg>
+      </div>
+    </div>
+
+    <div class="warnbox">
+      <div style="font-size:16px;flex-shrink:0">⚠️</div>
+      <div class="warnbox-text"><strong>Dominio del logaritmo:</strong> log(x) y ln(x) solo están definidos para <strong>x &gt; 0</strong>. Por eso ambas gráficas nunca tocan ni cruzan el eje vertical (x=0) — se acercan infinitamente pero nunca llegan.</div>
+    </div>
+
+    <div class="tryit">
+      <div style="font-size:16px;flex-shrink:0">💡</div>
+      <div class="tryit-text"><strong>Relación inversa:</strong> las funciones exponenciales y logarítmicas son espejos una de otra. Si grafican f(x) = 10ˣ y g(x) = log₁₀(x) juntas, notarán que son simétricas respecto a la línea y = x.</div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<footer>
+  ITB — Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span>Matemáticas Aplicadas</span> · Semana 1 — Clase Práctica 1
+</footer>
+
+<script>
+/* ════════════════════════════════════════════
+   GENERADOR DE GRÁFICAS SVG — sin librerías externas
+   ════════════════════════════════════════════ */
+
+function drawGraph(svgId, points, options = {}) {
+  const svg = document.getElementById(svgId);
+  const W = 280, H = 220;
+  const padding = 30;
+  const plotW = W - padding * 2;
+  const plotH = H - padding * 2;
+
+  const xs = points.map(p => p.x);
+  const ys = points.map(p => p.y);
+  const xMin = options.xMin ?? Math.min(...xs);
+  const xMax = options.xMax ?? Math.max(...xs);
+  const yMin = options.yMin ?? Math.min(0, ...ys);
+  const yMax = options.yMax ?? Math.max(...ys);
+
+  function toSvgX(x) { return padding + ((x - xMin) / (xMax - xMin)) * plotW; }
+  function toSvgY(y) { return H - padding - ((y - yMin) / (yMax - yMin)) * plotH; }
+
+  let svgContent = '';
+
+  // Grid lines (light)
+  for (let i = 0; i <= 4; i++) {
+    const gx = padding + (i / 4) * plotW;
+    const gy = padding + (i / 4) * plotH;
+    svgContent += `<line x1="${gx}" y1="${padding}" x2="${gx}" y2="${H-padding}" stroke="#21262D" stroke-width="0.5"/>`;
+    svgContent += `<line x1="${padding}" y1="${gy}" x2="${W-padding}" y2="${gy}" stroke="#21262D" stroke-width="0.5"/>`;
+  }
+
+  // Axes
+  const x0 = toSvgX(Math.max(xMin, Math.min(0, xMax)));
+  const y0 = toSvgY(Math.max(yMin, Math.min(0, yMax)));
+  svgContent += `<line x1="${padding}" y1="${y0}" x2="${W-padding}" y2="${y0}" stroke="#8B949E" stroke-width="1"/>`;
+  svgContent += `<line x1="${x0}" y1="${padding}" x2="${x0}" y2="${H-padding}" stroke="#8B949E" stroke-width="1"/>`;
+
+  // Axis labels
+  svgContent += `<text x="${W-padding+8}" y="${y0+4}" font-family="JetBrains Mono" font-size="9" fill="#8B949E">x</text>`;
+  svgContent += `<text x="${x0-4}" y="${padding-6}" font-family="JetBrains Mono" font-size="9" fill="#8B949E" text-anchor="end">y</text>`;
+
+  // Curve path
+  const color = options.color || '#8B5CF6';
+  let pathD = '';
+  points.forEach((p, i) => {
+    const sx = toSvgX(p.x), sy = toSvgY(p.y);
+    pathD += (i === 0 ? 'M' : 'L') + sx.toFixed(1) + ',' + sy.toFixed(1) + ' ';
+  });
+  svgContent += `<path d="${pathD}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+
+  // Points (dots) — only at integer-ish sample points
+  if (options.dots) {
+    options.dots.forEach(p => {
+      const sx = toSvgX(p.x), sy = toSvgY(p.y);
+      svgContent += `<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="3" fill="${color}" stroke="#0D1117" stroke-width="1"/>`;
+    });
+  }
+
+  svg.innerHTML = svgContent;
+}
+
+// ── f(x) = 3^x ──
+(function() {
+  const pts = [];
+  for (let x = -3; x <= 3; x += 0.1) pts.push({x, y: Math.pow(3, x)});
+  const dots = [-3,-2,-1,0,1,2,3].map(x => ({x, y: Math.pow(3, x)}));
+  drawGraph('graph-exp1', pts, {color: '#8B5CF6', dots, yMax: 27, yMin: 0});
+})();
+
+// ── g(x) = (1/4)^x ──
+(function() {
+  const pts = [];
+  for (let x = -3; x <= 3; x += 0.1) pts.push({x, y: Math.pow(0.25, x)});
+  const dots = [-3,-2,-1,0,1,2,3].map(x => ({x, y: Math.pow(0.25, x)}));
+  drawGraph('graph-exp2', pts, {color: '#F43F5E', dots, yMax: 64, yMin: 0});
+})();
+
+// ── f(x) = log10(x) ──
+(function() {
+  const pts = [];
+  for (let x = 0.1; x <= 5; x += 0.05) pts.push({x, y: Math.log10(x)});
+  const dots = [1,2,3,4,5].map(x => ({x, y: Math.log10(x)}));
+  drawGraph('graph-log1', pts, {color: '#10B981', dots, xMin: 0, xMax: 5, yMin: -1, yMax: 1});
+})();
+
+// ── g(x) = ln(x) ──
+(function() {
+  const pts = [];
+  for (let x = 0.1; x <= 5; x += 0.05) pts.push({x, y: Math.log(x)});
+  const dots = [1,2,3,4,5].map(x => ({x, y: Math.log(x)}));
+  drawGraph('graph-log2', pts, {color: '#3B82F6', dots, xMin: 0, xMax: 5, yMin: -2, yMax: 2});
+})();
+</script>
+</body>
+</html>
