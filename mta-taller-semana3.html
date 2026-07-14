@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Taller S3 — MTA · Instituto Tecnológico de Negocios</title>
+<script>
+(function(){
+  const saved = localStorage.getItem('itb-theme') || 'dark';
+  if(saved === 'light') document.documentElement.classList.add('light');
+})();
+function toggleTheme(){
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('itb-theme', isLight ? 'light' : 'dark');
+  const icon = document.getElementById('theme-icon');
+  if(icon) icon.textContent = isLight ? '☀️' : '🌙';
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK MODE (default) ── */
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;
+  --border:#21262D;--border2:#30363D;
+  --ac:#8B5CF6;--ac-dim:#1e1340;--ac2:#8B5CF6;
+  --muted:#8B949E;--text:#E6EDF3;--radius:10px;
+  --green:#4ADE80;--green-dim:#1a4731;
+  --amber:#F59E0B;--amber-dim:#2d2208;
+  --rose:#FF7B72;--blue:#3B82F6;--blue-dim:#0c1d3f;
+  --grid-line:rgba(255,255,255,.012);
+  --nav-bg:rgba(13,17,23,.92);
+  --code-bg:#010409;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+
+/* ── LIGHT MODE ── */
+html.light{
+  --bg:#F6F8FA;--surface:#FFFFFF;--surface2:#F0F2F5;
+  --border:#D0D7DE;--border2:#C5CDD5;
+  --muted:#656D76;--text:#1F2328;
+  --green:#1A7F37;--green-dim:#DAFBE1;
+  --amber:#9A6700;--amber-dim:#FFF8C5;
+  --rose:#CF222E;--blue:#0969DA;--blue-dim:#DDF4FF;
+  --ac-dim:#F0EEFF;
+  --grid-line:rgba(0,0,0,.04);
+  --nav-bg:rgba(246,248,250,.94);
+  --code-bg:#F6F8FA;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+}
+html.light .code-block,
+html.light .code-body,
+html.light .cb-eq,
+html.light .cb-in{color:#1F2328 !important}
+html.light body::before{
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px) !important
+}
+
+/* ── THEME TOGGLE SWITCH ── */
+.theme-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;flex-shrink:0}
+.toggle-track{width:38px;height:20px;border-radius:20px;background:var(--border2);border:1px solid var(--border);
+  position:relative;transition:background .25s;cursor:pointer;flex-shrink:0}
+html.light .toggle-track{background:#D0D7DE}
+.toggle-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+  background:var(--muted);transition:all .25s;display:flex;align-items:center;justify-content:center;font-size:8px}
+html.light .toggle-knob{transform:translateX(18px);background:var(--amber)}
+.toggle-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;transition:background .25s,color .25s}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:44px 44px;transition:opacity .25s}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:54px;gap:12px;transition:background .25s,border-color .25s}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:var(--ac);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-brand .sep{color:var(--border)}.nav-brand .dim{color:var(--muted);font-weight:400}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--ac-dim);border:1px solid var(--border);color:var(--ac);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.nav-back{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:6px;text-decoration:none;transition:all .2s;white-space:nowrap}
+.nav-back:hover{color:var(--text);border-color:var(--ac)}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 1.5rem}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:26px 2rem;text-align:center;color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:20px}
+footer span{color:var(--ac)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th{background:var(--surface2);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:9px 13px;border:1px solid var(--border);text-align:left}
+td{padding:9px 13px;border:1px solid var(--border);color:var(--muted);vertical-align:middle;transition:background .2s}
+tr:hover td{background:var(--surface2)}
+td:first-child{font-family:'JetBrains Mono',monospace;color:var(--ac);font-weight:600}
+
+.hero{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:52px 1.5rem 36px;text-align:center}
+.hero h1{font-family:'JetBrains Mono',monospace;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.1;margin-bottom:10px}
+.groups-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px}
+.gcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 10px;text-align:center;cursor:pointer;transition:all .22s}
+.gcard:hover{transform:translateY(-3px)}
+.access-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:20px;text-align:center}
+.access-panel.vis{display:block}
+.key-input{background:#010409;border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:15px;padding:10px 16px;border-radius:7px;width:220px;outline:none;letter-spacing:.12em;text-align:center;transition:border-color .2s}
+.key-input:focus{border-color:var(--ac)}
+.key-err{font-family:'JetBrains Mono',monospace;font-size:12px;color:#FF7B72;margin-top:10px;display:none}
+.mission-panel{display:none}.mission-panel.vis{display:block}
+.nav-timer{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--amber);display:flex;align-items:center;gap:6px}
+#td{font-size:16px;font-weight:700;min-width:58px}
+.tbtn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:5px;cursor:pointer;transition:all .2s}
+.tbtn:hover{color:var(--text)}.tbtn.on{background:#1e1340;color:var(--ac);border-color:#8B5CF644}
+.global-solution{display:none;background:var(--surface);border:1px solid rgba(74,222,128,.3);border-radius:var(--radius);padding:26px;margin-top:32px}
+.global-solution.vis{display:block}
+@media(max-width:640px){.groups-grid{grid-template-columns:repeat(3,1fr)}}
+</style></head><body>
+<nav>
+  <div class="nav-brand">
+    <span>🔐</span>
+    MTA <span class="sep">/</span><span class="dim">taller-semana-3</span>
+  </div>
+  <div class="nav-timer">⏱ <span id="td">40:00</span>
+    <button class="tbtn" id="tbtn" onclick="toggleTimer()">▶ iniciar</button>
+    <button class="tbtn" onclick="resetTimer()">↺</button>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div class="theme-toggle" onclick="toggleTheme()" title="Cambiar modo claro/oscuro">
+    <div class="toggle-track"><div class="toggle-knob" id="theme-icon">🌙</div></div>
+    <span class="toggle-label">tema</span>
+  </div>
+    <a class="nav-back" href="MTA.html">↩ Semana 3</a>
+  </div>
+</nav>
+
+<div style="position:relative;z-index:1;max-width:860px;margin:0 auto;padding:48px 1.5rem 36px;text-align:center">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px">
+    <span style="flex:1;max-width:60px;height:1px;background:var(--border);display:block"></span>
+    Semana 3 · Taller grupal · MTA
+    <span style="flex:1;max-width:60px;height:1px;background:var(--border);display:block"></span>
+  </div>
+  <h1 style="font-family:'JetBrains Mono',monospace;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:700;line-height:1.1;margin-bottom:10px">
+    <span style="color:var(--muted)">Taller Grupal — Interés Simple</span>
+  </h1>
+  <p style="color:var(--muted);font-size:14px;max-width:520px;margin:0 auto 24px;line-height:1.7">Cada grupo resolverá dos casos de interés simple aplicados a situaciones empresariales. Al finalizar, cada equipo socializará el procedimiento utilizado y justificará sus respuestas.</p>
+  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;background:#1e1340;border:1px solid #8B5CF644;color:var(--ac)">10 Grupos</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;background:#1e1340;border:1px solid #8B5CF644;color:var(--ac)">40 minutos</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px">// Selecciona tu grupo<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+  <div class="groups-grid">
+    <div class="gcard" onclick="sel(1)" style="border-color:#3B82F644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#3B82F6">G1</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 1</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Comercial Andina</div>
+      </div><div class="gcard" onclick="sel(2)" style="border-color:#10B98144">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#10B981">G2</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 2</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Distribuidora El Sol</div>
+      </div><div class="gcard" onclick="sel(3)" style="border-color:#F59E0B44">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#F59E0B">G3</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 3</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Inversiones Horizonte</div>
+      </div><div class="gcard" onclick="sel(4)" style="border-color:#EF444444">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#EF4444">G4</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 4</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">AgroExport S.A.</div>
+      </div><div class="gcard" onclick="sel(5)" style="border-color:#8B5CF644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#8B5CF6">G5</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 5</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Cooperativa Nuevo Futuro</div>
+      </div><div class="gcard" onclick="sel(6)" style="border-color:#14B8A644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#14B8A6">G6</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 6</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Constructora Horizonte</div>
+      </div><div class="gcard" onclick="sel(7)" style="border-color:#F9731644">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#F97316">G7</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 7</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Industrias NovaTech</div>
+      </div><div class="gcard" onclick="sel(8)" style="border-color:#6366F144">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#6366F1">G8</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 8</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Importadora Pacífico</div>
+      </div><div class="gcard" onclick="sel(9)" style="border-color:#EC489944">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#EC4899">G9</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 9</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Logística Express</div>
+      </div><div class="gcard" onclick="sel(10)" style="border-color:#22C55E44">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;color:#22C55E">G10</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px">Grupo 10</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.4">Innova Servicios S.A.</div>
+      </div>
+  </div>
+
+  
+    <div id="access-1" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#3B82F6;margin-bottom:6px">🔒 Grupo 1 — Comercial Andina</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-1" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(1)">
+        <button style="background:#3B82F6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(1)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-1">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-2" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#10B981;margin-bottom:6px">🔒 Grupo 2 — Distribuidora El Sol</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-2" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(2)">
+        <button style="background:#10B981;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(2)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-2">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-3" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#F59E0B;margin-bottom:6px">🔒 Grupo 3 — Inversiones Horizonte</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-3" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(3)">
+        <button style="background:#F59E0B;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(3)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-3">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-4" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EF4444;margin-bottom:6px">🔒 Grupo 4 — AgroExport S.A.</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-4" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(4)">
+        <button style="background:#EF4444;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(4)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-4">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-5" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#8B5CF6;margin-bottom:6px">🔒 Grupo 5 — Cooperativa Nuevo Futuro</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-5" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(5)">
+        <button style="background:#8B5CF6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(5)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-5">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-6" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#14B8A6;margin-bottom:6px">🔒 Grupo 6 — Constructora Horizonte</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-6" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(6)">
+        <button style="background:#14B8A6;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(6)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-6">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-7" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#F97316;margin-bottom:6px">🔒 Grupo 7 — Industrias NovaTech</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-7" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(7)">
+        <button style="background:#F97316;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(7)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-7">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-8" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#6366F1;margin-bottom:6px">🔒 Grupo 8 — Importadora Pacífico</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-8" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(8)">
+        <button style="background:#6366F1;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(8)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-8">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-9" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#EC4899;margin-bottom:6px">🔒 Grupo 9 — Logística Express</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-9" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(9)">
+        <button style="background:#EC4899;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(9)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-9">⚠ Clave incorrecta</div>
+    </div>
+    <div id="access-10" class="access-panel">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#22C55E;margin-bottom:6px">🔒 Grupo 10 — Innova Servicios S.A.</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:18px">Ingresa la clave de tu grupo</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <input class="key-input" id="ki-10" type="password" placeholder="clave del grupo" onkeydown="if(event.key==='Enter')ck(10)">
+        <button style="background:#22C55E;color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:10px 22px;border-radius:7px;border:none;cursor:pointer" onclick="ck(10)">Acceder</button>
+      </div>
+      <div class="key-err" id="ke-10">⚠ Clave incorrecta</div>
+    </div>
+  
+    <div id="mission-1" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#0c1d3f;border:1px solid #3B82F644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#3B82F6;flex-shrink:0">G1</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 1 — Comercial Andina</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La empresa <strong style="color:#3B82F6">Comercial Andina</strong> solicitó un préstamo para ampliar su inventario de productos tecnológicos y desea conocer el costo financiero de la operación.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#3B82F6;font-weight:700">Comercial Andina</span></div><div style="color:var(--muted)">Ejercicio 1:</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#3B82F6;font-weight:700">$3500</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#3B82F6;font-weight:700">9% anual</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#3B82F6;font-weight:700">2 años</span></div><div style="color:var(--muted)">Ejercicio 2:</div><div><span style="color:var(--muted)">Interés:</span> <span style="color:#3B82F6;font-weight:700">$432</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#3B82F6;font-weight:700">8% anual</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#3B82F6;font-weight:700">3 años</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #3B82F644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#0c1d3f;border-bottom:1px solid #3B82F644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#3B82F6">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el interés simple del primer ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el monto final que deberá cancelar la empresa.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el capital del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Explique qué representa el interés obtenido.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#0c1d3f;color:#3B82F6;border:1px solid #3B82F644;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">¿Considera conveniente este préstamo? Justifique.</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Desarrollo completo de ambos ejercicios.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Fórmulas utilizadas.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Resultados finales.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición de 5 minutos.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1: I = 3500×0.09×2 = <strong style="color:#3B82F6">$630</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2: M = 3500 + 630 = <strong style="color:#3B82F6">$4130</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3: C = 432 /(0.08×3)= <strong style="color:#3B82F6">$1800</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-2" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#052e16;border:1px solid #10B98144;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#10B981;flex-shrink:0">G2</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 2 — Distribuidora El Sol</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La empresa necesita evaluar el rendimiento de una inversión realizada para ampliar su capacidad de distribución.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#10B981;font-weight:700">Distribuidora El Sol</span></div><div style="color:var(--muted)">Ejercicio 1:</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#10B981;font-weight:700">$7800</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#10B981;font-weight:700">6.5% anual</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#10B981;font-weight:700">18 meses</span></div><div style="color:var(--muted)">Ejercicio 2:</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#10B981;font-weight:700">$5000</span></div><div><span style="color:var(--muted)">Interés:</span> <span style="color:#10B981;font-weight:700">$900</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#10B981;font-weight:700">4 años</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #10B98144;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#052e16;border-bottom:1px solid #10B98144">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#10B981">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el interés simple.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el monto final.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine la tasa de interés del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Analice el costo financiero.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#052e16;color:#10B981;border:1px solid #10B98144;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">¿Invertiría nuevamente bajo estas condiciones?</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Procedimiento matemático.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Resultados.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Interpretación financiera.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">18 meses = 1.5 años</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I=7800×0.065×1.5</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#10B981">I=$760.50</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">M=7800+760.50</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#10B981">M=$8560.50</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">i=900/(5000×4)</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#10B981">i=0.045=4.5%</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-3" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#2d2208;border:1px solid #F59E0B44;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#F59E0B;flex-shrink:0">G3</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 3 — Inversiones Horizonte</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La empresa desea conocer el rendimiento de un capital invertido durante varios años.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#F59E0B;font-weight:700">Inversiones Horizonte</span></div><div style="color:var(--muted)">Ejercicio 1</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#F59E0B;font-weight:700">$12500</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#F59E0B;font-weight:700">7.2%</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#F59E0B;font-weight:700">2 años 6 meses</span></div><div style="color:var(--muted)">Ejercicio 2</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#F59E0B;font-weight:700">$4800</span></div><div><span style="color:var(--muted)">Monto:</span> <span style="color:#F59E0B;font-weight:700">$5664</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#F59E0B;font-weight:700">3 años</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #F59E0B44;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#2d2208;border-bottom:1px solid #F59E0B44">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#F59E0B">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el interés simple.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el monto final.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule la tasa del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Analice el rendimiento obtenido.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d2208;color:#F59E0B;border:1px solid #F59E0B44;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Explique la importancia del tiempo en el interés simple.</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Resolución completa.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Explicación del procedimiento.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">2 años 6 meses = 2.5 años</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I=12500×0.072×2.5</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#F59E0B">I=$2250</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">M=12500+2250</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#F59E0B">M=$14750</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I=5664−4800=864</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">i=864/(4800×3)</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#F59E0B">i=6%</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-4" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #EF444444;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#EF4444;flex-shrink:0">G4</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 4 — AgroExport S.A.</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La empresa financió la compra de maquinaria agrícola mediante un préstamo simple.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#EF4444;font-weight:700">AgroExport S.A.</span></div><div style="color:var(--muted)">Ejercicio 1</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#EF4444;font-weight:700">$9600</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#EF4444;font-weight:700">5.5%</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#EF4444;font-weight:700">4 años</span></div><div style="color:var(--muted)">Ejercicio 2</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#EF4444;font-weight:700">$6500</span></div><div><span style="color:var(--muted)">Interés:</span> <span style="color:#EF4444;font-weight:700">$1248</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#EF4444;font-weight:700">6.4%</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #EF444444;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #EF444444">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#EF4444">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el interés simple.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el monto.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el tiempo del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Analice el costo del préstamo.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EF4444;border:1px solid #EF444444;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Explique por qué el tiempo influye directamente en el interés.</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Cálculos.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Desarrollo matemático.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Conclusiones.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I=9600×0.055×4</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#EF4444">I=$2112</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">M=9600+2112</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#EF4444">M=$11712</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">t=1248/(6500×0.064)</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#EF4444">t=3 años</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-5" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1e1340;border:1px solid #8B5CF644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#8B5CF6;flex-shrink:0">G5</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 5 — Cooperativa Nuevo Futuro</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La cooperativa analiza diferentes alternativas de financiamiento para sus socios.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#8B5CF6;font-weight:700">Cooperativa Nuevo Futuro</span></div><div style="color:var(--muted)">Ejercicio 1</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#8B5CF6;font-weight:700">$15000</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#8B5CF6;font-weight:700">11%</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#8B5CF6;font-weight:700">9 meses</span></div><div style="color:var(--muted)">Ejercicio 2</div><div><span style="color:var(--muted)">Interés:</span> <span style="color:#8B5CF6;font-weight:700">$2100</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#8B5CF6;font-weight:700">7%</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#8B5CF6;font-weight:700">5 años</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #8B5CF644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1e1340;border-bottom:1px solid #8B5CF644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#8B5CF6">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el interés simple.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el monto final.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el capital del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Analice si el préstamo resulta conveniente.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Explique qué ocurriría si el tiempo aumentara al doble.</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Resolución completa.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Procedimiento.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Conclusiones.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">9 meses = 0.75 años</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I=15000×0.11×0.75</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#8B5CF6">I=$1237.50</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">M=15000+1237.50</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#8B5CF6">M=$16237.50</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">C=2100/(0.07×5)</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#8B5CF6">C=$6000</strong></div>
+      </div>
+    </div>
+    <div id="mission-6" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #14B8A644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#14B8A6;flex-shrink:0">G6</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 6 — Constructora Horizonte</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La empresa <strong style="color:#14B8A6">Constructora Horizonte</strong> obtuvo un préstamo para adquirir maquinaria destinada a un nuevo proyecto inmobiliario. El gerente financiero necesita conocer el costo del financiamiento y evaluar la rentabilidad de la inversión.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#14B8A6;font-weight:700">Constructora Horizonte</span></div><div style="color:var(--muted)">Ejercicio 1</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#14B8A6;font-weight:700">$18400</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#14B8A6;font-weight:700">8.5% anual</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#14B8A6;font-weight:700">15 meses</span></div><div style="color:var(--muted)">Ejercicio 2</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#14B8A6;font-weight:700">$9500</span></div><div><span style="color:var(--muted)">Monto:</span> <span style="color:#14B8A6;font-weight:700">$11210</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#14B8A6;font-weight:700">3 años</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #14B8A644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #14B8A644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#14B8A6">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#14B8A6;border:1px solid #14B8A644;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el interés simple del primer ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#14B8A6;border:1px solid #14B8A644;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el monto final del préstamo.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#14B8A6;border:1px solid #14B8A644;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule la tasa de interés del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#14B8A6;border:1px solid #14B8A644;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Analice si la tasa obtenida representa un costo financiero elevado.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#14B8A6;border:1px solid #14B8A644;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Explique cómo cambiaría el interés si el préstamo fuera por cinco años.</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Desarrollo completo de ambos ejercicios.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Procedimiento matemático.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Resultados obtenidos.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición de 5 minutos.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">15 meses = 1.25 años</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I = 18400 × 0.085 × 1.25</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#14B8A6">I = $1.955,00</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">M = 18400 + 1955</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#14B8A6">M = $20.355,00</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I = 11210 − 9500 = 1710</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">i = 1710 / (9500 × 3)</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#14B8A6">i = 0.06 = 6%</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-7" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#2d1a08;border:1px solid #F9731644;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#F97316;flex-shrink:0">G7</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 7 — Industrias NovaTech</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La empresa <strong style="color:#F97316">Industrias NovaTech</strong> financió la compra de equipos industriales para ampliar su capacidad de producción.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#F97316;font-weight:700">Industrias NovaTech</span></div><div style="color:var(--muted)">Ejercicio 1</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#F97316;font-weight:700">$25000</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#F97316;font-weight:700">6.8% anual</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#F97316;font-weight:700">2 años y 9 meses</span></div><div style="color:var(--muted)">Ejercicio 2</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#F97316;font-weight:700">$11500</span></div><div><span style="color:var(--muted)">Interés:</span> <span style="color:#F97316;font-weight:700">$2760</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#F97316;font-weight:700">8% anual</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #F9731644;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#2d1a08;border-bottom:1px solid #F9731644">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#F97316">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d1a08;color:#F97316;border:1px solid #F9731644;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el interés simple del primer ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d1a08;color:#F97316;border:1px solid #F9731644;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el monto final.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d1a08;color:#F97316;border:1px solid #F9731644;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el tiempo del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d1a08;color:#F97316;border:1px solid #F9731644;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Analice si el préstamo resulta conveniente para la empresa.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2d1a08;color:#F97316;border:1px solid #F9731644;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Explique la importancia del tiempo en este tipo de operaciones.</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Resolución completa.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Procedimiento matemático.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Interpretación de resultados.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">2 años y 9 meses = 2.75 años</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I = 25000 × 0.068 × 2.75</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#F97316">I = $4.675,00</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">M = 25000 + 4675</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#F97316">M = $29.675,00</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">t = 2760 / (11500 × 0.08)</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#F97316">t = 3 años</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-8" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #6366F144;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#6366F1;flex-shrink:0">G8</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 8 — Importadora Pacífico</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La empresa <strong style="color:#6366F1">Importadora Pacífico</strong> analiza una inversión realizada para ampliar su línea de productos importados.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#6366F1;font-weight:700">Importadora Pacífico</span></div><div style="color:var(--muted)">Ejercicio 1</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#6366F1;font-weight:700">$13750</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#6366F1;font-weight:700">9.25% anual</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#6366F1;font-weight:700">30 meses</span></div><div style="color:var(--muted)">Ejercicio 2</div><div><span style="color:var(--muted)">Interés:</span> <span style="color:#6366F1;font-weight:700">$1458</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#6366F1;font-weight:700">6% anual</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#6366F1;font-weight:700">4 años y 6 meses</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #6366F144;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #6366F144">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#6366F1">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#6366F1;border:1px solid #6366F144;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el interés simple.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#6366F1;border:1px solid #6366F144;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el monto final.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#6366F1;border:1px solid #6366F144;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el capital del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#6366F1;border:1px solid #6366F144;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Analice el rendimiento de la inversión.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#6366F1;border:1px solid #6366F144;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Explique por qué la tasa influye directamente en el interés generado.</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Desarrollo matemático.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Resultados finales.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Conclusiones.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">30 meses = 2.5 años</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I = 13750 × 0.0925 × 2.5</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#6366F1">I = $3.179,69</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">M = 13750 + 3179.69</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#6366F1">M = $16.929,69</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">4 años y 6 meses = 4.5 años</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">C = 1458 / (0.06 × 4.5)</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#6366F1">C = $5.400</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-9" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #EC489944;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#EC4899;flex-shrink:0">G9</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 9 — Logística Express</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La empresa <strong style="color:#EC4899">Logística Express</strong> obtuvo financiamiento para ampliar su flota de transporte.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#EC4899;font-weight:700">Logística Express</span></div><div style="color:var(--muted)">Ejercicio 1</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#EC4899;font-weight:700">$32000</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#EC4899;font-weight:700">7.8% anual</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#EC4899;font-weight:700">20 meses</span></div><div style="color:var(--muted)">Ejercicio 2</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#EC4899;font-weight:700">$14000</span></div><div><span style="color:var(--muted)">Monto:</span> <span style="color:#EC4899;font-weight:700">$16730</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#EC4899;font-weight:700">2 años y 6 meses</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #EC489944;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #EC489944">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#EC4899">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el interés simple.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el monto final.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine la tasa del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Analice el costo del financiamiento.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#EC4899;border:1px solid #EC489944;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Explique cómo afectaría duplicar la tasa de interés.</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Resolución de ejercicios.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Procedimiento.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Conclusiones.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">20 meses = 1.6667 años</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I = 32000 × 0.078 × 1.6667</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#EC4899">I ≈ $4.160</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">M = 32000 + 4160</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#EC4899">M = $36.160</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I = 16730 − 14000 = 2730</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">i = 2730 / (14000 × 2.5)</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#EC4899">i = 0.078 = 7.8%</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">---</div>
+      </div>
+    </div>
+    <div id="mission-10" class="mission-panel">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:10px;background:#1a1a1a;border:1px solid #22C55E44;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#22C55E;flex-shrink:0">G10</div>
+        <div>
+          <div style="font-size:17px;font-weight:700;margin-bottom:2px">Grupo 10 — Innova Servicios S.A.</div>
+          <div style="font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace">Taller grupal · Semana 3</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-bottom:14px;font-size:14px;color:var(--muted);line-height:1.7">La empresa <strong style="color:#22C55E">Innova Servicios S.A.</strong> obtuvo un préstamo para modernizar sus instalaciones y adquirir nuevos equipos tecnológicos.</div>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px">
+        <div style="display:flex;align-items:center;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);gap:8px">
+          <div style="display:flex;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#FF5F56"></span><span style="width:8px;height:8px;border-radius:50%;background:#FFBD2E"></span><span style="width:8px;height:8px;border-radius:50%;background:#27C93F"></span></div>Datos del caso
+        </div>
+        <div style="padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9">
+          <div><span style="color:var(--muted)">Empresa:</span> <span style="color:#22C55E;font-weight:700">Innova Servicios S.A.</span></div><div style="color:var(--muted)">Ejercicio 1</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#22C55E;font-weight:700">$21500</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#22C55E;font-weight:700">10% anual</span></div><div><span style="color:var(--muted)">Tiempo:</span> <span style="color:#22C55E;font-weight:700">3 años y 6 meses</span></div><div style="color:var(--muted)">Ejercicio 2</div><div><span style="color:var(--muted)">Capital:</span> <span style="color:#22C55E;font-weight:700">$18000</span></div><div><span style="color:var(--muted)">Interés:</span> <span style="color:#22C55E;font-weight:700">$3780</span></div><div><span style="color:var(--muted)">Tasa:</span> <span style="color:#22C55E;font-weight:700">7% anual</span></div>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid #22C55E44;border-radius:var(--radius);overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#1a1a1a;border-bottom:1px solid #22C55E44">
+          <div style="font-size:20px">❓</div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#22C55E">Preguntas de análisis</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">Respondan en grupo y prepárense para exponer</div>
+          </div>
+        </div>
+        <div style="padding:16px 18px"><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+        
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#22C55E;border:1px solid #22C55E44;flex-shrink:0;margin-top:1px">Q1</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Calcule el interés simple.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#22C55E;border:1px solid #22C55E44;flex-shrink:0;margin-top:1px">Q2</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el monto final.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#22C55E;border:1px solid #22C55E44;flex-shrink:0;margin-top:1px">Q3</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Determine el tiempo del segundo ejercicio.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#22C55E;border:1px solid #22C55E44;flex-shrink:0;margin-top:1px">Q4</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Analice si la inversión resulta financieramente conveniente.</div>
+            
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;background:#1a1a1a;color:#22C55E;border:1px solid #22C55E44;flex-shrink:0;margin-top:1px">Q5</div>
+          <div>
+            <div style="font-size:14px;color:var(--text);line-height:1.6">Explique cómo variaría el interés si la tasa aumentara al 12%.</div>
+            
+          </div>
+        </div>
+      </div></div>
+      </div>
+      
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:16px 20px;margin-top:18px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px">// Entregable<span style="flex:1;height:1px;background:var(--border);display:block"></span></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Desarrollo matemático.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Resultados obtenidos.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Interpretación financiera.</span>
+          </div>
+          <div style="display:flex;gap:9px;font-size:13px;color:var(--muted)">
+            <span style="color:#4ADE80;font-weight:700;flex-shrink:0">✓</span>
+            <span>Exposición de 5 minutos.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:#1a4731;border:1px solid rgba(74,222,128,.3);border-radius:9px;padding:14px 18px;margin-top:16px;font-size:13px;color:var(--muted)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#4ADE80;margin-bottom:10px">// Solución docente</div>
+        <div style="padding:5px 0;border-bottom:1px solid #1a4731">Q1:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">3 años y 6 meses = 3.5 años</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">I = 21500 × 0.10 × 3.5</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#22C55E">I = $7.525</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q2:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">M = 21500 + 7525</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#22C55E">M = $29.025</strong></div><div style="padding:5px 0;border-bottom:1px solid #1a4731">Q3:</div><div style="padding:5px 0;border-bottom:1px solid #1a4731">t = 3780 / (18000 × 0.07)</div><div style="padding:5px 0;border-bottom:1px solid #1a4731"><strong style="color:#22C55E">t = 3 años</strong></div>
+      </div>
+    </div>
+
+  <div style="margin-top:40px;text-align:center">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px">// Acceso docente — guía de respuestas</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <input id="sol-in" type="password" placeholder="clave docente" style="background:#010409;border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 14px;border-radius:7px;outline:none;letter-spacing:.1em;width:200px" onkeydown="if(event.key==='Enter')chkSol()">
+      <button onclick="chkSol()" style="background:#052e16;border:1px solid rgba(74,222,128,.3);color:#4ADE80;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:8px 18px;border-radius:7px;cursor:pointer">Ver guía</button>
+    </div>
+  </div>
+
+  <div id="global-sol" class="global-solution">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#4ADE80;text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px;display:flex;align-items:center;gap:10px">// Guía de respuestas — Vista docente<span style="flex:1;height:1px;background:rgba(74,222,128,.2);display:block"></span></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#3B82F6;margin-bottom:10px">G1 — Comercial Andina · Clave: <span style="background:#0c1d3f;padding:2px 8px;border-radius:4px">grupo1</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1: I = 3500×0.09×2 = <strong style="color:#3B82F6">$630</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2: M = 3500 + 630 = <strong style="color:#3B82F6">$4130</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3: C = 432 /(0.08×3)= <strong style="color:#3B82F6">$1800</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#10B981;margin-bottom:10px">G2 — Distribuidora El Sol · Clave: <span style="background:#052e16;padding:2px 8px;border-radius:4px">grupo2</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">18 meses = 1.5 años</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I=7800×0.065×1.5</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#10B981">I=$760.50</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">M=7800+760.50</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#10B981">M=$8560.50</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">i=900/(5000×4)</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#10B981">i=0.045=4.5%</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#F59E0B;margin-bottom:10px">G3 — Inversiones Horizonte · Clave: <span style="background:#2d2208;padding:2px 8px;border-radius:4px">grupo3</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">2 años 6 meses = 2.5 años</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I=12500×0.072×2.5</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#F59E0B">I=$2250</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">M=12500+2250</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#F59E0B">M=$14750</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I=5664−4800=864</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">i=864/(4800×3)</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#F59E0B">i=6%</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#EF4444;margin-bottom:10px">G4 — AgroExport S.A. · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">grupo4</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I=9600×0.055×4</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#EF4444">I=$2112</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">M=9600+2112</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#EF4444">M=$11712</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">t=1248/(6500×0.064)</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#EF4444">t=3 años</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#8B5CF6;margin-bottom:10px">G5 — Cooperativa Nuevo Futuro · Clave: <span style="background:#1e1340;padding:2px 8px;border-radius:4px">grupo5</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">9 meses = 0.75 años</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I=15000×0.11×0.75</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#8B5CF6">I=$1237.50</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">M=15000+1237.50</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#8B5CF6">M=$16237.50</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">C=2100/(0.07×5)</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#8B5CF6">C=$6000</strong></div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14B8A6;margin-bottom:10px">G6 — Constructora Horizonte · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">grupo6</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">15 meses = 1.25 años</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I = 18400 × 0.085 × 1.25</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#14B8A6">I = $1.955,00</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">M = 18400 + 1955</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#14B8A6">M = $20.355,00</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I = 11210 − 9500 = 1710</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">i = 1710 / (9500 × 3)</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#14B8A6">i = 0.06 = 6%</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#F97316;margin-bottom:10px">G7 — Industrias NovaTech · Clave: <span style="background:#2d1a08;padding:2px 8px;border-radius:4px">grupo7</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">2 años y 9 meses = 2.75 años</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I = 25000 × 0.068 × 2.75</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#F97316">I = $4.675,00</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">M = 25000 + 4675</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#F97316">M = $29.675,00</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">t = 2760 / (11500 × 0.08)</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#F97316">t = 3 años</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#6366F1;margin-bottom:10px">G8 — Importadora Pacífico · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">grupo8</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">30 meses = 2.5 años</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I = 13750 × 0.0925 × 2.5</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#6366F1">I = $3.179,69</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">M = 13750 + 3179.69</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#6366F1">M = $16.929,69</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">4 años y 6 meses = 4.5 años</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">C = 1458 / (0.06 × 4.5)</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#6366F1">C = $5.400</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#EC4899;margin-bottom:10px">G9 — Logística Express · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">grupo9</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">20 meses = 1.6667 años</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I = 32000 × 0.078 × 1.6667</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#EC4899">I ≈ $4.160</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">M = 32000 + 4160</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#EC4899">M = $36.160</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I = 16730 − 14000 = 2730</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">i = 2730 / (14000 × 2.5)</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#EC4899">i = 0.078 = 7.8%</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">---</div>
+      </div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#22C55E;margin-bottom:10px">G10 — Innova Servicios S.A. · Clave: <span style="background:#1a1a1a;padding:2px 8px;border-radius:4px">grupo10</span></div>
+        <div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q1:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">3 años y 6 meses = 3.5 años</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">I = 21500 × 0.10 × 3.5</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#22C55E">I = $7.525</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q2:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">M = 21500 + 7525</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#22C55E">M = $29.025</strong></div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">Q3:</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6">t = 3780 / (18000 × 0.07)</div><div style="font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.6"><strong style="color:#22C55E">t = 3 años</strong></div>
+      </div>
+  </div>
+
+</div>
+
+<footer>
+  Instituto Tecnológico de Negocios &nbsp;·&nbsp; <span>MTA — Taller Semana 3</span>
+</footer>
+
+<script>
+const CLAVES={1:"grupo1",2:"grupo2",3:"grupo3",4:"grupo4",5:"grupo5",6:"grupo6",7:"grupo7",8:"grupo8",9:"grupo9",10:"grupo10"};
+const CLAVE_DOC="MTA2025ITB";
+let secs=2400,run=false,iv;
+function fmt(s){const m=Math.floor(s/60),sc=s%60;return(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc}
+document.getElementById('td').textContent=fmt(secs);
+function toggleTimer(){run=!run;const b=document.getElementById('tbtn');
+  if(run){b.textContent='⏸ pausar';b.classList.add('on');
+    iv=setInterval(()=>{if(secs>0){secs--;document.getElementById('td').textContent=fmt(secs);}
+      else{clearInterval(iv);run=false;b.textContent='▶ iniciar';b.classList.remove('on');document.getElementById('td').style.color='#FF7B72';}
+    },1000);
+  }else{clearInterval(iv);b.textContent='▶ iniciar';b.classList.remove('on');}
+}
+function resetTimer(){clearInterval(iv);run=false;secs=2400;
+  document.getElementById('td').textContent=fmt(secs);document.getElementById('td').style.color='';
+  const b=document.getElementById('tbtn');b.textContent='▶ iniciar';b.classList.remove('on');}
+function sel(n){
+  [1,2,3,4,5,6,7,8,9,10].forEach(i=>{
+    document.getElementById('access-'+i).classList.remove('vis');
+    document.getElementById('mission-'+i).classList.remove('vis');
+  });
+  document.getElementById('access-'+n).classList.add('vis');
+  document.getElementById('access-'+n).scrollIntoView({behavior:'smooth',block:'center'});
+}
+function ck(n){
+  const v=document.getElementById('ki-'+n).value.trim();
+  if(v===CLAVES[n]){
+    document.getElementById('access-'+n).classList.remove('vis');
+    document.getElementById('mission-'+n).classList.add('vis');
+    document.getElementById('mission-'+n).scrollIntoView({behavior:'smooth',block:'start'});
+    document.getElementById('ke-'+n).style.display='none';
+  }else{
+    document.getElementById('ke-'+n).style.display='block';
+    document.getElementById('ki-'+n).style.borderColor='#FF7B72';
+    setTimeout(()=>document.getElementById('ki-'+n).style.borderColor='',1500);
+  }
+}
+function chkSol(){
+  if(document.getElementById('sol-in').value.trim()===CLAVE_DOC){
+    document.getElementById('global-sol').classList.add('vis');
+    document.getElementById('global-sol').scrollIntoView({behavior:'smooth'});
+  }else{
+    document.getElementById('sol-in').style.borderColor='#FF7B72';
+    setTimeout(()=>document.getElementById('sol-in').style.borderColor='',1500);
+  }
+}
+</script>
+</body></html>
