@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Matemática Aplicada — Instituto Tecnológico de Negocios</title>
+<script>
+(function(){
+  const saved = localStorage.getItem('itb-theme') || 'dark';
+  if(saved === 'light') document.documentElement.classList.add('light');
+})();
+function toggleTheme(){
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('itb-theme', isLight ? 'light' : 'dark');
+  const icon = document.getElementById('theme-icon');
+  if(icon) icon.textContent = isLight ? '☀️' : '🌙';
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── DARK MODE (default) ── */
+:root{
+  --bg:#0D1117;--surface:#161B22;--surface2:#1C2129;
+  --border:#21262D;--border2:#30363D;
+  --ac:#8B5CF6;--ac-dim:#1e1340;--ac2:#8B5CF6;
+  --muted:#8B949E;--text:#E6EDF3;--radius:10px;
+  --green:#4ADE80;--green-dim:#1a4731;
+  --amber:#F59E0B;--amber-dim:#2d2208;
+  --rose:#FF7B72;--blue:#3B82F6;--blue-dim:#0c1d3f;
+  --grid-line:rgba(255,255,255,.012);
+  --nav-bg:rgba(13,17,23,.92);
+  --code-bg:#010409;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+}
+
+/* ── LIGHT MODE ── */
+html.light{
+  --bg:#F6F8FA;--surface:#FFFFFF;--surface2:#F0F2F5;
+  --border:#D0D7DE;--border2:#C5CDD5;
+  --muted:#656D76;--text:#1F2328;
+  --green:#1A7F37;--green-dim:#DAFBE1;
+  --amber:#9A6700;--amber-dim:#FFF8C5;
+  --rose:#CF222E;--blue:#0969DA;--blue-dim:#DDF4FF;
+  --ac-dim:#F0EEFF;
+  --grid-line:rgba(0,0,0,.04);
+  --nav-bg:rgba(246,248,250,.94);
+  --code-bg:#F6F8FA;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+}
+html.light .code-block,
+html.light .code-body,
+html.light .cb-eq,
+html.light .cb-in{color:#1F2328 !important}
+html.light body::before{
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px) !important
+}
+
+/* ── THEME TOGGLE SWITCH ── */
+.theme-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;flex-shrink:0}
+.toggle-track{width:38px;height:20px;border-radius:20px;background:var(--border2);border:1px solid var(--border);
+  position:relative;transition:background .25s;cursor:pointer;flex-shrink:0}
+html.light .toggle-track{background:#D0D7DE}
+.toggle-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+  background:var(--muted);transition:all .25s;display:flex;align-items:center;justify-content:center;font-size:8px}
+html.light .toggle-knob{transform:translateX(18px);background:var(--amber)}
+.toggle-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
+
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65;overflow-x:hidden;transition:background .25s,color .25s}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:44px 44px;transition:opacity .25s}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:54px;gap:12px;transition:background .25s,border-color .25s}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:var(--ac);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-brand .sep{color:var(--border)}.nav-brand .dim{color:var(--muted);font-weight:400}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--ac-dim);border:1px solid var(--border);color:var(--ac);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.nav-back{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:6px;text-decoration:none;transition:all .2s;white-space:nowrap}
+.nav-back:hover{color:var(--text);border-color:var(--ac)}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 1.5rem}
+.sec-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:26px 2rem;text-align:center;color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;margin-top:20px}
+footer span{color:var(--ac)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th{background:var(--surface2);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:9px 13px;border:1px solid var(--border);text-align:left}
+td{padding:9px 13px;border:1px solid var(--border);color:var(--muted);vertical-align:middle;transition:background .2s}
+tr:hover td{background:var(--surface2)}
+td:first-child{font-family:'JetBrains Mono',monospace;color:var(--ac);font-weight:600}
+
+.hero{position:relative;z-index:1;min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 2rem 56px;text-align:center}
+.hero h1{font-family:'JetBrains Mono',monospace;font-size:clamp(2rem,6vw,4rem);font-weight:700;line-height:1.05;margin-bottom:10px}
+.hero-sub{font-family:'JetBrains Mono',monospace;font-size:clamp(.85rem,2vw,1.05rem);color:var(--muted);margin-bottom:32px}
+.stat{text-align:center;font-family:'JetBrains Mono',monospace}
+.stat-n{font-size:30px;font-weight:700;line-height:1;margin-bottom:4px}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.pres-section{position:relative;z-index:1;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.pres-inner{max-width:920px;margin:0 auto;padding:48px 2rem}
+.pres-tag{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ac);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.pres-tag::after{content:'';flex:1;height:1px;background:var(--border)}
+.pres-lead{font-size:15px;color:var(--muted);line-height:1.85;max-width:800px;margin-bottom:14px}
+.units-section{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:52px 1.5rem 80px}
+.units-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.tools-strip{position:relative;z-index:1;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.tools-inner{max-width:920px;margin:0 auto;padding:28px 2rem;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+</style></head><body>
+<nav>
+  <div class="nav-brand">
+    <span>∑</span>
+    MTA
+    <span class="sep">/</span>
+    <span class="dim">Matemática Aplicada</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="nav-badge">2025·2026</div>
+    <div class="theme-toggle" onclick="toggleTheme()" title="Cambiar modo claro/oscuro">
+    <div class="toggle-track"><div class="toggle-knob" id="theme-icon">🌙</div></div>
+    <span class="toggle-label">tema</span>
+  </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;justify-content:center;gap:12px">
+    <span style="flex:1;max-width:56px;height:1px;background:var(--border);display:block"></span>
+    Instituto Tecnológico de Negocios · Materia
+    <span style="flex:1;max-width:56px;height:1px;background:var(--border);display:block"></span>
+  </div>
+  <div style="width:72px;height:72px;border-radius:14px;background:#1e1340;border:2px solid #8B5CF644;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 22px;box-shadow:0 0 28px #8B5CF622">∑</div>
+  <h1><span style="color:var(--muted);font-weight:300;display:block;font-size:.55em">Matemática aplicada a los negocios, análisis financiero y toma de decisiones</span><span style="color:var(--ac)">Matemática Aplicada</span></h1>
+  <div class="hero-sub">Matemática aplicada a los negocios, análisis financiero y toma de decisiones</div>
+  <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:36px">
+    <div class="stat"><div class="stat-n" style="color:var(--ac)">3</div><div class="stat-l">Unidades</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--green)">2</div><div class="stat-l">Disponibles</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--ac)">Python</div><div class="stat-l">Lenguaje</div></div>
+  </div>
+  <a href="#unidades" style="display:inline-flex;align-items:center;gap:8px;background:var(--ac);color:#0D1117;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;padding:12px 28px;border-radius:9px;text-decoration:none">Ver contenido →</a>
+</section>
+
+<div class="pres-section"><div class="pres-inner">
+  <div class="pres-tag">// Presentación de la asignatura</div>
+  <p class="pres-lead">La asignatura de <strong style="color:#8B5CF6">Matemática Aplicada</strong> desarrolla las herramientas matemáticas necesarias para resolver problemas propios del ámbito empresarial, financiero y administrativo. A través de situaciones reales, el estudiante aprenderá a interpretar datos, modelar escenarios y tomar decisiones fundamentadas mediante cálculos matemáticos.
+Durante el curso se abordarán operaciones algebraicas, ecuaciones, porcentajes, interés simple e interés compuesto, aplicando cada concepto a casos relacionados con inversiones, créditos, financiamiento y gestión empresarial.</p>
+  
+  <div class="pres-tag" style="margin-top:28px">// Objetivo General</div>
+  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px 22px;display:flex;gap:16px;align-items:flex-start">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--ac);background:#1e1340;border:1px solid #8B5CF644;min-width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0">OG</div>
+    <div style="font-size:14px;color:var(--muted);line-height:1.7">Aplicar herramientas matemáticas para analizar y resolver problemas financieros y administrativos mediante procedimientos cuantitativos que faciliten la toma de decisiones.</div>
+  </div>
+  
+  <div class="pres-tag" style="margin-top:28px">// Objetivos Específicos</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px"><div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #8B5CF6;border-radius:9px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .2s">
+      <div style="font-size:18px;flex-shrink:0">🧠</div>
+      <div style="font-size:13.5px;color:var(--muted);line-height:1.65">Resolver operaciones algebraicas y ecuaciones aplicadas al contexto empresarial.</div>
+    </div><div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #818CF8;border-radius:9px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .2s">
+      <div style="font-size:18px;flex-shrink:0">🔄</div>
+      <div style="font-size:13.5px;color:var(--muted);line-height:1.65">Interpretar problemas financieros utilizando porcentajes, razones y proporciones.</div>
+    </div><div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #10B981;border-radius:9px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .2s">
+      <div style="font-size:18px;flex-shrink:0">🧩</div>
+      <div style="font-size:13.5px;color:var(--muted);line-height:1.65">Calcular interés simple e interés compuesto para analizar inversiones y créditos.</div>
+    </div><div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #F59E0B;border-radius:9px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:all .2s">
+      <div style="font-size:18px;flex-shrink:0">📊</div>
+      <div style="font-size:13.5px;color:var(--muted);line-height:1.65">Desarrollar habilidades para modelar y resolver situaciones reales mediante procedimientos matemáticos.</div>
+    </div></div>
+</div></div>
+
+<div class="tools-strip"><div class="tools-inner">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);flex-shrink:0">// Herramientas</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>Calculadora científica</div><div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>Microsoft Excel</div><div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>Calculadora financiera en línea</div><div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:var(--surface2);color:var(--muted)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);flex-shrink:0"></span>Navegador web</div>
+  </div>
+</div></div>
+
+<section class="units-section" id="unidades">
+  <div class="sec-tag" style="margin-bottom:28px">// Contenido del curso — 3 unidades</div>
+  <div class="units-grid"><div style="background:var(--surface);border:1px solid #8B5CF644;border-radius:var(--radius);overflow:hidden;opacity:1;transition:all .2s">
+      <div style="height:3px;background:#8B5CF6"></div>
+      <div style="padding:20px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;line-height:1;color:#8B5CF6;opacity:.15">U1</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 11px;border-radius:5px;background:#1e1340;color:#8B5CF6;border:1px solid #8B5CF644">
+          ✓ Disponible</div>
+      </div>
+      <div style="padding:8px 20px 14px;flex:1">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Unidad 1</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px">Fundamentos Matemáticos Aplicados</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:10px">Introducción a las operaciones algebraicas, porcentajes y ecuaciones utilizadas en problemas empresariales.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          
+        </div>
+      </div>
+      
+      <div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:7px">
+        <a href="mta-semana1.html" style="display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+          <span>📖</span><span style="flex:1">mta-semana1.html</span><span style="font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:2px 6px;border-radius:3px">clase</span>
+        </a>
+        <a href="mta-taller1.html" style="display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+          <span>🔐</span><span style="flex:1">mta-taller1.html</span><span style="font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:2px 6px;border-radius:3px">taller</span>
+        </a>
+      </div>
+    </div><div style="background:var(--surface);border:1px solid #818CF844;border-radius:var(--radius);overflow:hidden;opacity:1;transition:all .2s">
+      <div style="height:3px;background:#818CF8"></div>
+      <div style="padding:20px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;line-height:1;color:#818CF8;opacity:.15">U2</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 11px;border-radius:5px;background:#1e1b4b;color:#818CF8;border:1px solid #818CF844">
+          ✓ Disponible</div>
+      </div>
+      <div style="padding:8px 20px 14px;flex:1">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Unidad 2</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px">Interés Simple y Compuesto: Análisis Comercial.</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:10px">Valor del dinero en el tiempo,
+Terminologías usadas,
+Cálculo de interés,
+Interés simple,
+Interés compuesto,
+Capitalización</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          
+        </div>
+      </div>
+      
+      <div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:7px">
+        <a href="mta-semana3.html" style="display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+          <span>📖</span><span style="flex:1">mta-semana3.html</span><span style="font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:2px 6px;border-radius:3px">clase</span>
+        </a>
+        <a href="mta-taller3.html" style="display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+          <span>🔐</span><span style="flex:1">mta-taller3.html</span><span style="font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:2px 6px;border-radius:3px">taller</span>
+        </a>
+      </div>
+      <div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:7px">
+        <a href="mta-semana4.html" style="display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+          <span>📖</span><span style="flex:1">mta-semana4.html</span><span style="font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:2px 6px;border-radius:3px">clase</span>
+        </a>
+        <a href="mta-taller4.html" style="display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all .2s">
+          <span>🔐</span><span style="flex:1">mta-taller4.html</span><span style="font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:2px 6px;border-radius:3px">taller</span>
+        </a>
+      </div>
+    </div><div style="background:var(--surface);border:1px solid  var(--border);border-radius:var(--radius);overflow:hidden;opacity:0.55;transition:all .2s">
+      <div style="height:3px;background:#10B981"></div>
+      <div style="padding:20px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;line-height:1;color:#10B981;opacity:.15">U3</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:4px 11px;border-radius:5px;background:var(--surface2);color:var(--muted);border:1px solid var(--border)">
+          Próximamente</div>
+      </div>
+      <div style="padding:8px 20px 14px;flex:1">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px">Unidad 3</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px">Interés Compuesto</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:10px">Aplicación del interés compuesto en inversiones, ahorro y financiamiento a largo plazo.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          
+        </div>
+      </div>
+      <div style="padding:10px 20px 18px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px;opacity:.7">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Próximamente</div>
+    </div></div>
+</section>
+
+<footer>
+  Instituto Tecnológico de Negocios — Matemática Aplicada &nbsp;·&nbsp; <span>MTA</span>
+</footer>
+</body></html>
